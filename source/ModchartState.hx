@@ -571,4 +571,3 @@ class ModchartState
 		return new ModchartState(isStoryMode);
 	}
 }
-#end

@@ -14,7 +14,7 @@ import Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUIState;
 
-class MusicBeatState extends FlxUIState
+class MusicBeatState extends FlxUIState;
 {
 	private var lastBeat:Float = 0;
 	private var lastStep:Float = 0;

@@ -45,7 +45,6 @@ class HexMenuData
 		else
 		{
 			path = dataPath;
-			Debug.logTrace("loading " + path);
 			var jsonShit = sys.io.File.getContent(FileSystem.absolutePath(dataPath));
 			var jsonData = Json.parse(jsonShit);
 			data = cast jsonData;
@@ -67,7 +66,6 @@ class HexMenuItem extends FlxSprite
 	{
 		if (itemMeta.isSparrow)
 		{
-			Debug.logError("You cannot change the graphic of a sparrow atlas!");
 			return;
 		}
 
@@ -96,7 +94,6 @@ class HexMenuItem extends FlxSprite
 				anm = i;
 		if (anm == null)
 		{
-			Debug.logError("failed to play " + name);
 			return;
 		}
 		offset.set(anm.offsetX, anm.offsetY);
@@ -127,7 +124,6 @@ class HexMenuState extends MusicBeatState
 			if (i.itemMeta.name == name)
 				return i;
 		}
-		Debug.logTrace("couldn't find " + name);
 		return null;
 	}
 

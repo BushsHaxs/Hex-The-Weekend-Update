@@ -341,11 +341,9 @@ class PlayState extends MusicBeatState
 	{
 		Conductor.songPosition = 0;
 		restartedSong = true;
-		startedCountdown = false;
 		boyfriend.stunned = false;
 		persistentUpdate = true;
 		persistentDraw = true;
-		paused = false;
 		for (i in members)
 		{
 			remove(i);
@@ -1857,7 +1855,6 @@ class PlayState extends MusicBeatState
 
 	public var previousRate = songMultiplier;
 
-	public var coolingHandler:MP4Handler = null;
 
 	function startSong():Void
 	{

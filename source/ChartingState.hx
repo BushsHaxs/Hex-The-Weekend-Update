@@ -3514,7 +3514,6 @@ class ChartingState extends MusicBeatState
 		toRemove = []; // clear memory
 		switchState(new ChartingState());
 	}
-
 	function loadAutosave():Void
 	{
 		while (curRenderedNotes.members.length > 0)
@@ -3567,7 +3566,6 @@ class ChartingState extends MusicBeatState
 		toRemove = []; // clear memory
 		switchState(new ChartingState());
 	}
-
 	function autosaveSong():Void
 	{
 		FlxG.save.data.autosave = Json.stringify({

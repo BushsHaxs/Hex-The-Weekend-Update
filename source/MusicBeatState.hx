@@ -69,7 +69,6 @@ class MusicBeatState extends FlxUIState
 		var result = super.add(Object);
 		return result;
 	}
-
 	public function switchState(nextState:MusicBeatState, goToLoading:Bool = true, trans:Bool = true, song:Bool = false)
 	{
 		if (fuckYou)
@@ -83,7 +82,6 @@ class MusicBeatState extends FlxUIState
 				if (goToLoading)
 				{
 					var state:FlxState = new LoadingScreen(nextState, song);
-
 					@:privateAccess
 					FlxG.game._requestedState = state;
 				}

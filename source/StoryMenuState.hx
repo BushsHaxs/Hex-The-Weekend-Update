@@ -453,18 +453,6 @@ class StoryMenuState extends MusicBeatState
 					#end
 				}
 
-				public static function unlockNextWeek(week:Int):Void
-				{
-					if (week <= weekData().length - 1 /*&& FlxG.save.data.weekUnlocked == week*/) // fuck you, unlocks all weeks
-					{
-						weekUnlocked.push(true);
-						trace('Week ' + week + ' beat (Week ' + (week + 1) + ' unlocked)');
-					}
-
-					FlxG.save.data.weekUnlocked = weekUnlocked.length - 1;
-					FlxG.save.flush();
-				}
-
 				override function beatHit()
 				{
 					super.beatHit();

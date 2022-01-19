@@ -363,8 +363,6 @@ class StoryMenuState extends MusicBeatState
 			Debug.logTrace("starting the thing");
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
-			}
-
 				function changeDifficulty(change:Int = 0):Void
 				{
 					curDifficulty += change;
@@ -482,4 +480,4 @@ class StoryMenuState extends MusicBeatState
 					if (weekCharacters[curWeek][2] == 'spooky' || weekCharacters[curWeek][2] == 'gf')
 						grpWeekCharacters.members[2].bopHead();
 				}
-		}
+			}

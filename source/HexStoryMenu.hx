@@ -158,15 +158,13 @@ class HexStoryMenu extends HexMenuState
 	override function update(elapsed:Float)
 	{
 		if (FlxG.keys.justPressed.ESCAPE && !stopSelecting)
-			switchState(new HexMainMenu(HexMenuState.loadHexMenu("main-menu")));
-
-		if (FlxG.keys.justPressed.DOWN && !stopSelecting)
-		{
-			selectedIndex++;
-			if (selectedIndex > 1)
-				selectedIndex = 0;
-			select();
-		}
+			if (FlxG.keys.justPressed.DOWN && !stopSelecting)
+			{
+				selectedIndex++;
+				if (selectedIndex > 1)
+					selectedIndex = 0;
+				select();
+			}
 		if (FlxG.keys.justPressed.UP && !stopSelecting)
 		{
 			selectedIndex--;
@@ -225,10 +223,6 @@ class HexStoryMenu extends HexMenuState
 			PlayState.SONG = Song.conversionChecks(Song.loadFromJson(PlayState.storyPlaylist[0], diff));
 			PlayState.storyWeek = selectedIndex == 0 ? 10 : 11;
 			PlayState.campaignScore = 0;
-			if (selectedIndex == 1)
-				switchState(new BruhADiagWindow(PlayState.SONG.songId));
-			else
-				switchState(new PlayState());
 		}
 
 		weekXScore.text = weekXHighScore + "";

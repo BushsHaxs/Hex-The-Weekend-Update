@@ -241,10 +241,7 @@ class PauseSubState extends MusicBeatSubstate
 						GameplayCustomizeState.freeplayStage = 'stage';
 						GameplayCustomizeState.freeplaySong = 'bopeebo';
 						GameplayCustomizeState.freeplayWeek = 1;
-						PlayState.instance.switchState(new HexStoryMenu(HexMenuState.loadHexMenu("story-menu")));
 					}
-					else
-						PlayState.instance.switchState(new HexMainMenu(HexMenuState.loadHexMenu("main-menu")));
 			}
 		}
 

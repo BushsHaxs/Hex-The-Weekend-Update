@@ -147,25 +147,6 @@ class HexMainMenu extends HexMenuState
 		super.beatHit();
 	}
 
-	public function selectThing()
-	{
-		switch (selectedIndex)
-		{
-			case 0:
-				switchState(new HexStoryMenu(HexMenuState.loadHexMenu("story-menu")));
-			case 1:
-				switchState(new HexFreeplayMenu(HexMenuState.loadHexMenu("freeplay-menu")));
-			case 2:
-				switchState(new HexGalleryMenu(HexMenuState.loadHexMenu("gallery-menu")));
-			case 3:
-				switchState(new HexJukeboxMenu(HexMenuState.loadHexMenu("jukebox-menu")));
-			case 4:
-				switchState(new HexOptionsDirect(HexMenuState.loadHexMenu("options-menu")));
-			case 5:
-				switchState(new HexCreditsMenu(HexMenuState.loadHexMenu("credits-menu")));
-		}
-	}
-
 	override function update(elapsed:Float)
 	{
 		Conductor.songPosition = FlxG.sound.music.time;

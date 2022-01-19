@@ -2288,7 +2288,6 @@ class PlayState extends MusicBeatState
 
 			if (Stage.curStage == "hexw" && songStarted && SONG.songId.toLowerCase() == "cooling")
 			{
-				coolingHandler.bitmap.pause();
 			}
 
 			#if FEATURE_DISCORD

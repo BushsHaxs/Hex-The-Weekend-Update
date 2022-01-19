@@ -55,7 +55,6 @@ class Paths
 		{
 			if (Caching.bitmapData.exists(key))
 			{
-				Debug.logTrace('Loading image from bitmap cache: $key');
 				// Get data from cache.
 				return Caching.bitmapData.get(key);
 			}
@@ -69,7 +68,6 @@ class Paths
 		}
 		else
 		{
-			Debug.logWarn('Could not find image at path $path');
 			return null;
 		}
 	}

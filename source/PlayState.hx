@@ -350,20 +350,6 @@ class PlayState extends MusicBeatState
 		{
 			remove(i);
 		}
-		if (luaModchart != null)
-			luaModchart.die();
-		songScoreDef = 0;
-		songScore = 0;
-		unspawnNotes = [];
-		notes.clear();
-		totalNotesHit = 0;
-		totalPlayed = 0;
-		songTime = 0;
-		combo = 0;
-		accuracy = 0;
-		startingSong = false;
-		health = 1;
-
 		create();
 	}
 
@@ -2253,11 +2239,7 @@ class PlayState extends MusicBeatState
 					babyArrow.frames = Paths.getSparrowAtlas("noteskins/Arrows", "shared");
 					// Debug.logTrace(babyArrow.frames);
 					for (j in 0...4)
-					{
-						babyArrow.animation.addByPrefix(dataColor[j], 'arrow' + dataSuffix[j]);
-						babyArrow.animation.addByPrefix('dirCon' + j, dataSuffix[j].toLowerCase() + ' confirm', 24, false);
-					}
-
+				        }
 					var lowerDir:String = dataSuffix[i].toLowerCase();
 
 					babyArrow.animation.addByPrefix('static', 'arrow' + dataSuffix[i]);
@@ -2307,21 +2289,6 @@ class PlayState extends MusicBeatState
 
 			strumLineNotes.add(babyArrow);
 		}
-	}
-
-	private function appearStaticArrows():Void
-	{
-		Debug.logTrace("appearing");
-		var index = 0;
-		strumLineNotes.forEach(function(babyArrow:FlxSprite)
-		{
-			if (isStoryMode && !FlxG.save.data.middleScroll || executeModchart)
-				babyArrow.alpha = 1;
-			if (index > 3 && FlxG.save.data.middleScroll)
-				babyArrow.alpha = 1;
-			index++;
-		});
-		Debug.logTrace("appeared");
 	}
 
 	function tweenCamIn():Void
@@ -5542,7 +5509,7 @@ class PlayState extends MusicBeatState
 					notes.remove(i);
 			}
 
-			trace("FUCK YOU BITCH FUCKER CUCK SUCK BITCH " + cleanedSong.notes.length);
+			trace("nice job :) " + cleanedSong.notes.length);
 
 			SONG = cleanedSong;
 		}
@@ -5591,7 +5558,7 @@ class PlayState extends MusicBeatState
 					notes.remove(i);
 			}
 
-			trace("FUCK YOU BITCH FUCKER CUCK SUCK BITCH " + cleanedSong.notes.length);
+			trace("nice job :) " + cleanedSong.notes.length);
 
 			SONG = cleanedSong;
 		}

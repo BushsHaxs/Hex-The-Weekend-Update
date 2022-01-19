@@ -78,7 +78,6 @@ class FreeplayState extends MusicBeatState
 
 	public static var list:Array<String> = [];
 
-	override function load()
 	{
 		list = CoolUtil.coolTextFile(Paths.txt('data/freeplaySonglist'));
 
@@ -126,7 +125,6 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 		#end
-		super.load();
 	}
 
 	override function create()

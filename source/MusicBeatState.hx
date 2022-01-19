@@ -1,8 +1,5 @@
 package;
 
-import flixel.addons.ui.FlxUI;
-import flixel.FlxSprite;
-import flixel.FlxState;
 import flixel.math.FlxMath;
 import flixel.FlxCamera;
 import flixel.text.FlxText;
@@ -19,10 +16,6 @@ import flixel.addons.ui.FlxUIState;
 
 class MusicBeatState extends FlxUIState
 {
-	public static var lastState:FlxState;
-
-	public var fuckYou:Bool = false;
-
 	private var lastBeat:Float = 0;
 	private var lastStep:Float = 0;
 
@@ -36,7 +29,7 @@ class MusicBeatState extends FlxUIState
 
 	public static var initSave:Bool = false;
 
-	public var assets:Array<FlxBasic> = [];
+	private var assets:Array<FlxBasic> = [];
 
 	override function destroy()
 	{
@@ -45,77 +38,12 @@ class MusicBeatState extends FlxUIState
 		super.destroy();
 	}
 
-	override function remove(Object:flixel.FlxBasic, Splice:Bool = false):flixel.FlxBasic
-	{
-		MasterObjectLoader.removeObject(Object);
-		var result = super.remove(Object, Splice);
-		return result;
-	}
-
 	override function add(Object:flixel.FlxBasic):flixel.FlxBasic
 	{
-		if (Std.isOfType(Object, FlxUI))
-			return null;
-
-		if (Std.isOfType(Object, FlxSprite))
-		{
-			var spr:FlxSprite = cast(Object, FlxSprite);
-			if (spr.graphic != null)
-			{
-		}
-		// Debug.logTrace(Object);
-		MasterObjectLoader.addObject(Object);
-
+		if (FlxG.save.data.optimize)
+			assets.push(Object);
 		var result = super.add(Object);
 		return result;
-	}
-	public function switchState(nextState:MusicBeatState, goToLoading:Bool = true, trans:Bool = true, song:Bool = false)
-	{
-		if (fuckYou)
-			return;
-		fuckYou = true;
-		if (trans)
-		{
-			transitionOut(function()
-			{
-				lastState = this;
-				if (goToLoading)
-				{
-					var state:FlxState = new LoadingScreen(nextState, song);
-					@:privateAccess
-					FlxG.game._requestedState = state;
-				}
-				else
-				{
-					@:privateAccess
-					FlxG.game._requestedState = nextState;
-				}
-			});
-		}
-		else
-		{
-			lastState = this;
-			if (goToLoading)
-			{
-				var state:FlxState = new LoadingScreen(nextState, song);
-
-				@:privateAccess
-				FlxG.game._requestedState = state;
-			}
-			else
-			{
-				@:privateAccess
-				FlxG.game._requestedState = nextState;
-			}
-		}
-	}
-	var loadedCompletely:Bool = false;
-
-	public function load()
-	{
-		loadedCompletely = true;
-
-		Debug.logInfo("State loaded!");
 	}
 
 	public function clean()
@@ -144,8 +72,6 @@ class MusicBeatState extends FlxUIState
 		Application.current.window.onFocusOut.add(onWindowFocusOut);
 		TimingStruct.clearTimings();
 
-		KeyBinds.keyCheck();
-
 		if (transIn != null)
 			trace('reg ' + transIn.region);
 
@@ -156,7 +82,6 @@ class MusicBeatState extends FlxUIState
 	{
 		// everyStep();
 		/*var nextStep:Int = updateCurStep();
-
 			if (nextStep >= 0)
 			{
 				if (nextStep > curStep)
@@ -292,19 +217,17 @@ class MusicBeatState extends FlxUIState
 
 	function onWindowFocusOut():Void
 	{
-		if (fuckYou)
-			return;
 		if (PlayState.inDaPlay)
 		{
 			if (!PlayState.instance.paused && !PlayState.instance.endingSong && PlayState.instance.songStarted)
 			{
 				Debug.logTrace("Lost Focus");
+				PlayState.instance.openSubState(new PauseSubState());
+				PlayState.boyfriend.stunned = true;
+
 				PlayState.instance.persistentUpdate = false;
 				PlayState.instance.persistentDraw = true;
 				PlayState.instance.paused = true;
-
-				PlayState.instance.openSubState(new PauseSubState());
-				PlayState.boyfriend.stunned = true;
 
 				PlayState.instance.vocals.stop();
 				FlxG.sound.music.stop();
@@ -314,8 +237,7 @@ class MusicBeatState extends FlxUIState
 
 	function onWindowFocusIn():Void
 	{
-		if (fuckYou)
-			return;
+		Debug.logTrace("IM BACK!!!");
 		(cast(Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
 	}
 }

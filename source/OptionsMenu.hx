@@ -614,24 +614,22 @@ class OptionsMenu extends FlxSubState
 			}
 		}
 	}
-	}
-
-catch (e)
-	{
-		Debug.logError("wtf we actually did something wrong, but we dont crash bois.\n" + e);
-		selectedCatIndex = 0;
-		selectedOptionIndex = 0;
-		FlxG.sound.play(Paths.sound('scrollMenu'));
-		if (selectedCat != null)
+	catch (e)
 		{
-			for (i in 0...selectedCat.options.length)
+			Debug.logError("wtf we actually did something wrong, but we dont crash bois.\n" + e);
+			selectedCatIndex = 0;
+			selectedOptionIndex = 0;
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+			if (selectedCat != null)
 			{
-				var opt = selectedCat.optionObjects.members[i];
-				opt.y = selectedCat.titleObject.y + 54 + (46 * i);
+				for (i in 0...selectedCat.options.length)
+				{
+					var opt = selectedCat.optionObjects.members[i];
+					opt.y = selectedCat.titleObject.y + 54 + (46 * i);
+				}
+				selectedCat.optionObjects.members[selectedOptionIndex].text = selectedOption.getValue();
+				isInCat = true;
 			}
-			selectedCat.optionObjects.members[selectedOptionIndex].text = selectedOption.getValue();
-			isInCat = true;
 		}
 	}
-}
 }

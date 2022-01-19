@@ -533,8 +533,6 @@ class PlayState extends MusicBeatState
 		PlayStateChangeables.Optimize = FlxG.save.data.optimize;
 		PlayStateChangeables.zoom = FlxG.save.data.zoom;
 
-		removedVideo = false;
-
 		#if FEATURE_LUAMODCHART
 		// TODO: Refactor this to use OpenFlAssets.
 		executeModchart = FileSystem.exists(Paths.lua('songs/${PlayState.SONG.songId}/modchart'));
@@ -655,7 +653,6 @@ class PlayState extends MusicBeatState
 			if (coolingHandler == null)
 			{
 				coolingHandler = new MP4Handler();
-				coolingHandler.playMP4(Paths.video('coolingVisualizer'), null, coolingVideo, false, false, true);
 			}
 			else
 			{
@@ -793,7 +790,6 @@ class PlayState extends MusicBeatState
 
 		if (Stage.curStage == "hexwstage")
 		{
-			bopOn = 2;
 			Stage.swagBacks['crowd2'].alpha = 0;
 			Stage.swagBacks['crowd3'].alpha = 0;
 			Stage.swagBacks['lights2'].alpha = 0;

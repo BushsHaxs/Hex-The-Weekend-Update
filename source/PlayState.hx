@@ -1536,7 +1536,6 @@ class PlayState extends MusicBeatState
 
 		Debug.logTrace("appear");
 
-		appearStaticArrows();
 		// generateStaticArrows(0);
 		// generateStaticArrows(1);
 
@@ -2434,7 +2433,6 @@ class PlayState extends MusicBeatState
 
 	public var paused:Bool = false;
 
-	var startedCountdown:Bool = false;
 	var canPause:Bool = true;
 	var nps:Int = 0;
 	var maxNPS:Int = 0;

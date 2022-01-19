@@ -880,7 +880,6 @@ class PlayState extends MusicBeatState
 				if (isStoryMode)
 				{
 					camPos.x += 600;
-					tweenCamIn();
 				}
 			case 'dad':
 				camPos.x += 400;
@@ -1021,9 +1020,6 @@ class PlayState extends MusicBeatState
 
 		playerStrums = new FlxTypedGroup<StaticArrow>();
 		cpuStrums = new FlxTypedGroup<StaticArrow>();
-
-		generateStaticArrows(0);
-		generateStaticArrows(1);
 
 		// Update lane underlay positions AFTER static arrows :)
 

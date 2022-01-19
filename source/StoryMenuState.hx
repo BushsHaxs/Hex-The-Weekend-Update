@@ -453,8 +453,8 @@ class StoryMenuState extends MusicBeatState
 					#end
 				}
 
-				override function beatHit()
-
+				override function beatHit
+				}
 					super.beatHit();
 
 				if (curBeat % 2 == 0)

@@ -63,7 +63,6 @@ class MusicBeatState extends FlxUIState
 			if (spr.graphic != null)
 			{
 				if (spr.graphic.bitmap.image == null)
-			}
 		}
 		// Debug.logTrace(Object);
 		MasterObjectLoader.addObject(Object);

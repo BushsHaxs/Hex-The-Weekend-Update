@@ -107,10 +107,7 @@ class Main extends Sprite
 		toggleFPS(FlxG.save.data.fps);
 		#end
 
-		// Finish up loading debug tools.
-		Debug.onGameStart();
 	}
-
 	var game:FlxGame;
 
 	var fpsCounter:KadeEngineFPS;

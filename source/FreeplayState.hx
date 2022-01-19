@@ -444,7 +444,6 @@ class FreeplayState extends MusicBeatState
 			songs = [];
 			switchState(new HexMainMenu(HexMenuState.loadHexMenu("main-menu")));
 		}
-
 		if (accepted)
 		{
 			Debug.logTrace("trying to load the song");
@@ -557,7 +556,6 @@ class FreeplayState extends MusicBeatState
 		else
 			FreeplayState.instance.switchState(new PlayState(), true, true, true);
 	}
-
 	function changeDiff(change:Int = 0)
 	{
 		if (!songs[curSelected].diffs.contains(CoolUtil.difficultyFromInt(curDifficulty + change)))

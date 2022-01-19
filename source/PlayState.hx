@@ -1036,8 +1036,6 @@ class PlayState extends MusicBeatState
 		else
 			trace('song looks gucci');
 
-		generateSong(SONG.songId);
-
 		if (Stage.curStage == "hexw" && Paths.doesTextAssetExist('assets/data/songs/${SONG.songId}/${SONG.songId}-reactive.json'))
 		{
 			// load reactive chart
@@ -1160,8 +1158,7 @@ class PlayState extends MusicBeatState
 		scoreTxt.screenCenter(X);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		scoreTxt.text = Ratings.CalculateRanking(songScore, songScoreDef, nps, maxNPS,
-			(FlxG.save.data.roundAccuracy ? FlxMath.roundDecimal(accuracy, 0) : accuracy));
+		scoreTxt.text = Ratings.CalculateRanking(songScore, songScoreDef, (FlxG.save.data.roundAccuracy ? FlxMath.roundDecimal(accuracy, 0) : accuracy));
 		if (!FlxG.save.data.healthBar)
 			scoreTxt.y = healthBarBG.y;
 
@@ -1714,9 +1711,6 @@ class PlayState extends MusicBeatState
 	public function handleInput(evt:KeyboardEvent):Void
 	{ // this actually handles press inputs
 
-		if (PlayStateChangeables.botPlay || loadRep || paused)
-			return;
-
 		// first convert it from openfl to a flixel key code
 		// then use FlxKey to get the key's name based off of the FlxKey dictionary
 		// this makes it work for special characters
@@ -1820,7 +1814,6 @@ class PlayState extends MusicBeatState
 			}
 
 			boyfriend.holdTimer = 0;
-			goodNoteHit(coolNote);
 			var noteDiff:Float = -(coolNote.strumTime - Conductor.songPosition);
 			ana.hit = true;
 			ana.hitJudge = Ratings.judgeNote(noteDiff);
@@ -1828,7 +1821,6 @@ class PlayState extends MusicBeatState
 		}
 		else if (!FlxG.save.data.ghost && songStarted)
 		{
-			noteMiss(data, null);
 			ana.hit = false;
 			ana.hitJudge = "shit";
 			ana.nearestNote = [];

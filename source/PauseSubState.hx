@@ -199,12 +199,6 @@ class PauseSubState extends MusicBeatSubstate
 					close();
 				case "Restart Song":
 					FlxTween.globalManager.active = true;
-					PlayState.startTime = 0;
-					{
-						GlobalVideo.get().stop();
-					}
-					PlayState.instance.restart();
-					PlayState.stageTesting = false;
 					close();
 				case "Options":
 					goToOptions = true;
@@ -215,9 +209,7 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.startTime = 0;
 					{
 						GlobalVideo.get().stop();
-						PlayState.instance.removedVideo = true;
 					}
-					if (PlayState.loadRep)
 					{
 						FlxG.save.data.botplay = false;
 						FlxG.save.data.scrollSpeed = 1;

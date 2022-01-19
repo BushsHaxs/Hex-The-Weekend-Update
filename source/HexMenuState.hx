@@ -140,7 +140,6 @@ class HexMenuState extends MusicBeatState
 		{
 			var creator = new HexMenuCreator();
 			creator.loadS(_path);
-			switchState(creator);
 		}
 		super.update(elapsed);
 	}

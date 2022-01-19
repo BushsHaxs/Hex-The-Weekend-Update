@@ -60,10 +60,7 @@ class LoadingScreen extends MusicBeatState
 				loadMutex.acquire();
 				Debug.logTrace("reset da assets");
 				MasterObjectLoader.resetAssets();
-				target.load();
-				target.loadedCompletely = true;
 				Debug.logTrace("we done lets gtfo " + target);
-				switchState(target, false, true);
 				loadMutex.release();
 			});
 		}

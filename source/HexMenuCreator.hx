@@ -102,14 +102,12 @@ class HexMenuCreator extends MusicBeatState
 					if (i.itemMeta.name == ite)
 					{
 						found = true;
-						Debug.logTrace("selected " + ite);
 						selectedItem = i;
 						populateSprite();
 						break;
 					}
 				}
 				if (!found)
-					Debug.logTrace("couldn't find " + ite);
 			});
 			tab_group_asset.add(selectableItems);
 		}
@@ -138,7 +136,6 @@ class HexMenuCreator extends MusicBeatState
 				ofxEntry.value = i.offsetX;
 				ofyEntry.value = i.offsetY;
 				playAnim();
-				Debug.logTrace("found anim");
 				break;
 			}
 		}

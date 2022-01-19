@@ -1855,7 +1855,6 @@ class PlayState extends MusicBeatState
 
 	public var previousRate = songMultiplier;
 
-
 	function startSong():Void
 	{
 		if (laneunderlay != null)
@@ -2236,7 +2235,7 @@ class PlayState extends MusicBeatState
 					babyArrow.frames = Paths.getSparrowAtlas("noteskins/Arrows", "shared");
 					// Debug.logTrace(babyArrow.frames);
 					for (j in 0...4)
-					var lowerDir:String = dataSuffix[i].toLowerCase();
+						var lowerDir:String = dataSuffix[i].toLowerCase();
 
 					babyArrow.animation.addByPrefix('static', 'arrow' + dataSuffix[i]);
 					babyArrow.animation.addByPrefix('pressed', lowerDir + ' press', 24, false);
@@ -2459,9 +2458,6 @@ class PlayState extends MusicBeatState
 
 	override public function update(elapsed:Float)
 	{
-		if (!loadedCompletely)
-			return;
-
 		var rtemove = [];
 
 		for (i in FlxG.cameras.list)

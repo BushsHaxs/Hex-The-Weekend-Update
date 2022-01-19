@@ -46,7 +46,6 @@ class PauseSubState extends MusicBeatSubstate
 	{
 		super();
 
-		if (PlayState.instance.useVideo)
 		{
 			menuItems.remove("Resume");
 			if (GlobalVideo.get().playing)
@@ -143,8 +142,7 @@ class PauseSubState extends MusicBeatSubstate
 
 		super.update(elapsed);
 
-		if (PlayState.instance.useVideo)
-			menuItems.remove('Resume');
+		menuItems.remove('Resume');
 
 		if (FlxG.sound.music.playing)
 			FlxG.sound.music.pause();
@@ -202,11 +200,8 @@ class PauseSubState extends MusicBeatSubstate
 				case "Restart Song":
 					FlxTween.globalManager.active = true;
 					PlayState.startTime = 0;
-					if (PlayState.instance.useVideo)
 					{
 						GlobalVideo.get().stop();
-						PlayState.instance.remove(PlayState.instance.videoSprite);
-						PlayState.instance.removedVideo = true;
 					}
 					PlayState.instance.restart();
 					PlayState.stageTesting = false;
@@ -218,10 +213,8 @@ class PauseSubState extends MusicBeatSubstate
 					FUCKINGDONTDOITVLCMEDIAPLAYERISWEARTOGOD = true;
 					FlxTween.globalManager.active = true;
 					PlayState.startTime = 0;
-					if (PlayState.instance.useVideo)
 					{
 						GlobalVideo.get().stop();
-						PlayState.instance.remove(PlayState.instance.videoSprite);
 						PlayState.instance.removedVideo = true;
 					}
 					if (PlayState.loadRep)

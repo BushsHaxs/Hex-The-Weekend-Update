@@ -1270,9 +1270,6 @@ class ChartingState extends MusicBeatState
 
 			for (i in toRemove)
 				_song.notes.remove(i);
-
-			toRemove = []; // clear memory
-			switchState(new PlayState());
 		});
 
 		tab_group_section.add(refresh);
@@ -2652,8 +2649,6 @@ class ChartingState extends MusicBeatState
 						_song.notes.remove(i);
 
 					toRemove = []; // clear memory
-
-					switchState(new PlayState());
 				}
 
 				if (FlxG.keys.justPressed.E)
@@ -3510,10 +3505,8 @@ class ChartingState extends MusicBeatState
 
 		for (i in toRemove)
 			_song.notes.remove(i);
-
-		toRemove = []; // clear memory
-		switchState(new ChartingState());
 	}
+
 	function loadAutosave():Void
 	{
 		while (curRenderedNotes.members.length > 0)
@@ -3566,6 +3559,7 @@ class ChartingState extends MusicBeatState
 		toRemove = []; // clear memory
 		switchState(new ChartingState());
 	}
+
 	function autosaveSong():Void
 	{
 		FlxG.save.data.autosave = Json.stringify({

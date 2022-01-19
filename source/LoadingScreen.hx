@@ -21,7 +21,6 @@ class LoadingScreen extends MusicBeatState
 	public function new(_target:MusicBeatState, song:Bool = false)
 	{
 		target = _target;
-		Debug.logTrace("bruhg");
 		loadMutex = new Mutex();
 		loadingSong = song;
 		super();
@@ -47,7 +46,6 @@ class LoadingScreen extends MusicBeatState
 		bar.scrollFactor.set();
 		add(bar);
 
-		Debug.logTrace("lets do some loading " + bar);
 
 		super.create();
 	}

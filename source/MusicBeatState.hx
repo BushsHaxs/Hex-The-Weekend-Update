@@ -94,7 +94,6 @@ class MusicBeatState extends FlxUIState
 					@:privateAccess
 					FlxG.game._requestedState = nextState;
 				}
-				Debug.logTrace("switched");
 			});
 		}
 		else
@@ -114,7 +113,6 @@ class MusicBeatState extends FlxUIState
 			}
 		}
 	}
-
 	var loadedCompletely:Bool = false;
 
 	public function load()

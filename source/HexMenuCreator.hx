@@ -107,7 +107,6 @@ class HexMenuCreator extends MusicBeatState
 						break;
 					}
 				}
-				if (!found)
 			});
 			tab_group_asset.add(selectableItems);
 		}

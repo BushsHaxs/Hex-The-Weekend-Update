@@ -63,7 +63,6 @@ class MusicBeatState extends FlxUIState
 			if (spr.graphic != null)
 			{
 				if (spr.graphic.bitmap.image == null)
-					Debug.logWarn("you are adding a fuckin null texture (THIS WILL CRASH YOUR GAME!)");
 			}
 		}
 		// Debug.logTrace(Object);
@@ -78,7 +77,6 @@ class MusicBeatState extends FlxUIState
 		if (fuckYou)
 			return;
 		fuckYou = true;
-		Debug.logTrace("switching");
 		if (trans)
 		{
 			transitionOut(function()
@@ -114,7 +112,6 @@ class MusicBeatState extends FlxUIState
 				@:privateAccess
 				FlxG.game._requestedState = nextState;
 			}
-			Debug.logTrace("switched");
 		}
 	}
 
@@ -325,7 +322,6 @@ class MusicBeatState extends FlxUIState
 	{
 		if (fuckYou)
 			return;
-		Debug.logTrace("IM BACK!!!");
 		(cast(Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
 	}
 }

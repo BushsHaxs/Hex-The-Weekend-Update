@@ -26,8 +26,6 @@ class ModCore
 		#if FEATURE_MODCORE
 		Debug.logInfo("Initializing ModCore...");
 		loadModsById(getModIds());
-		#else
-		Debug.logInfo("ModCore not initialized; not supported on this platform.");
 		#end
 	}
 

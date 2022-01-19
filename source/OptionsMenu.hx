@@ -435,7 +435,6 @@ class OptionsMenu extends FlxSubState
 				}
 			}
 		}
-	else
 	{
 		if (selectedOption != null)
 			if (selectedOption.acceptType)

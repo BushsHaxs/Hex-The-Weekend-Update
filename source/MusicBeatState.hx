@@ -62,7 +62,6 @@ class MusicBeatState extends FlxUIState
 			var spr:FlxSprite = cast(Object, FlxSprite);
 			if (spr.graphic != null)
 			{
-				if (spr.graphic.bitmap.image == null)
 		}
 		// Debug.logTrace(Object);
 		MasterObjectLoader.addObject(Object);

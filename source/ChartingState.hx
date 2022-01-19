@@ -3557,7 +3557,6 @@ class ChartingState extends MusicBeatState
 			_song.notes.remove(i);
 
 		toRemove = []; // clear memory
-		switchState(new ChartingState());
 	}
 
 	function autosaveSong():Void

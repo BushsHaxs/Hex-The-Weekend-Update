@@ -43,13 +43,6 @@ class MainMenuState extends MusicBeatState
 
 	public static var finishedFunnyMove:Bool = false;
 
-	override function load()
-	{
-		Debug.logTrace("Load called");
-
-		super.load();
-	}
-
 	override function create()
 	{
 		Debug.logTrace("Create called");
@@ -154,7 +147,6 @@ class MainMenuState extends MusicBeatState
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
-
 		if (!selectedSomethin)
 		{
 			var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
@@ -185,16 +177,11 @@ class MainMenuState extends MusicBeatState
 				changeItem(1);
 			}
 
-			if (controls.BACK)
-			{
-				switchState(new TitleState());
-			}
-
 			if (controls.ACCEPT)
 			{
 				if (optionShit[curSelected] == 'donate')
 				{
-					fancyOpenURL("https://ninja-muffin24.itch.io/funkin");
+					fancyOpenURL("");
 				}
 				else
 				{
@@ -253,15 +240,10 @@ class MainMenuState extends MusicBeatState
 		switch (daChoice)
 		{
 			case 'story mode':
-				switchState(new StoryMenuState());
 				trace("Story Menu Selected");
 			case 'freeplay':
-				switchState(new FreeplayState());
-
 				trace("Freeplay Menu Selected");
-
 			case 'options':
-				switchState(new OptionsDirect());
 		}
 	}
 

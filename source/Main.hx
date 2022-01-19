@@ -89,8 +89,6 @@ class Main extends Sprite
 		framerate = 60;
 		#end
 
-		// Run this first so we can see logs.
-		Debug.onInitProgram();
 
 		// Gotta run this before any assets get loaded.
 		ModCore.initialize();

@@ -452,31 +452,32 @@ class StoryMenuState extends MusicBeatState
 					intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
 					#end
 				}
-				public static function unlockNextWeek(week:Int):Void
 				{
-					if (week <= weekData().length - 1 /*&& FlxG.save.data.weekUnlocked == week*/) // fuck you, unlocks all weeks
+					public static function unlockNextWeek(week:Int):Void
 					{
-						weekUnlocked.push(true);
-						trace('Week ' + week + ' beat (Week ' + (week + 1) + ' unlocked)');
+						if (week <= weekData().length - 1 /*&& FlxG.save.data.weekUnlocked == week*/) // fuck you, unlocks all weeks
+						{
+							weekUnlocked.push(true);
+							trace('Week ' + week + ' beat (Week ' + (week + 1) + ' unlocked)');
+						}
+
+						FlxG.save.data.weekUnlocked = weekUnlocked.length - 1;
+						FlxG.save.flush();
 					}
 
-					FlxG.save.data.weekUnlocked = weekUnlocked.length - 1;
-					FlxG.save.flush();
-				}
-
-				override function beatHit()
-				{
-					super.beatHit();
-
-					if (curBeat % 2 == 0)
+					override function beatHit()
 					{
-						grpWeekCharacters.members[0].bopHead();
-						grpWeekCharacters.members[1].bopHead();
-					}
-					else if (weekCharacters[curWeek][0] == 'spooky' || weekCharacters[curWeek][0] == 'gf')
-						grpWeekCharacters.members[0].bopHead();
+						super.beatHit();
 
-					if (weekCharacters[curWeek][2] == 'spooky' || weekCharacters[curWeek][2] == 'gf')
-						grpWeekCharacters.members[2].bopHead();
+						if (curBeat % 2 == 0)
+						{
+							grpWeekCharacters.members[0].bopHead();
+							grpWeekCharacters.members[1].bopHead();
+						}
+						else if (weekCharacters[curWeek][0] == 'spooky' || weekCharacters[curWeek][0] == 'gf')
+							grpWeekCharacters.members[0].bopHead();
+
+						if (weekCharacters[curWeek][2] == 'spooky' || weekCharacters[curWeek][2] == 'gf')
+							grpWeekCharacters.members[2].bopHead();
+					}
 				}
-			}

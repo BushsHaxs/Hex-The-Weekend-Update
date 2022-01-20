@@ -453,12 +453,13 @@ function updateText()
 
 	#if !switch
 	intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
+} 
 	#end
 }
 
 public static function unlockNextWeek(week:Int):Void
 {
-	if (week <= weekData().length - 1 /*&& FlxG.save.data.weekUnlocked == week*/) // fuck you, unlocks all weeks
+	if (week <= weekData().length - 1 /*&& FlxG.save.data.weekUnlocked == week*/// fuck you, unlocks all weeks
 	{
 		weekUnlocked.push(true);
 		trace('Week ' + week + ' beat (Week ' + (week + 1) + ' unlocked)');

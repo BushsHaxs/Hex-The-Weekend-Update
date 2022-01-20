@@ -27,7 +27,7 @@
       "type": "hxcpp",
       "preLaunchTask": "Build macOS (Release)",
       "request": "launch",
-      "program": "${workspaceFolder}/export/debug/macos/bin/Kade Engine"
+      "program": "${workspaceFolder}/export/release/macos/bin/Kade Engine"
     },
     {
       "name": "HTML5 (Debug)",

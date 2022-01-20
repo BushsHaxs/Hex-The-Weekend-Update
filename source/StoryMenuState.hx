@@ -362,7 +362,9 @@ class StoryMenuState extends MusicBeatState
 			PlayState.campaignScore = 0;
 			Debug.logTrace("starting the thing");
 			new FlxTimer().start(1, function(tmr:FlxTimer)
-		}
+				{
+					LoadingState.loadAndSwitchState(new PlayState(), true);
+				});
 	}
 }
 
@@ -459,7 +461,7 @@ intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
 
 public static function unlockNextWeek(week:Int):Void
 {
-if (week <= weekData().length - 1 /*&& FlxG.save.data.weekUnlocked == week*/ // fuck you, unlocks all weeks
+	if (week <= weekData().length - 1 /*&& FlxG.save.data.weekUnlocked == week*/) // fuck you, unlocks all weeks
 	{
 		weekUnlocked.push(true);
 		trace('Week ' + week + ' beat (Week ' + (week + 1) + ' unlocked)');

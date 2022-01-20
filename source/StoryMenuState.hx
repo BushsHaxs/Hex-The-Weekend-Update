@@ -463,3 +463,20 @@ class StoryMenuState extends MusicBeatState
 					FlxG.save.data.weekUnlocked = weekUnlocked.length - 1;
 					FlxG.save.flush();
 				}
+
+				override function beatHit()
+				{
+					super.beatHit();
+
+					if (curBeat % 2 == 0)
+					{
+						grpWeekCharacters.members[0].bopHead();
+						grpWeekCharacters.members[1].bopHead();
+					}
+					else if (weekCharacters[curWeek][0] == 'spooky' || weekCharacters[curWeek][0] == 'gf')
+						grpWeekCharacters.members[0].bopHead();
+
+					if (weekCharacters[curWeek][2] == 'spooky' || weekCharacters[curWeek][2] == 'gf')
+						grpWeekCharacters.members[2].bopHead();
+				}
+			}

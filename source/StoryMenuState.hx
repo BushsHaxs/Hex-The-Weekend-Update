@@ -451,15 +451,15 @@ function updateText()
 
 	txtTracklist.text += "\n";
 
-	#if !switch
-	intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
-} 
-	#end
+#if !switch
+intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
+}
+#end
 }
 
 public static function unlockNextWeek(week:Int):Void
 {
-	if (week <= weekData().length - 1 /*&& FlxG.save.data.weekUnlocked == week*/// fuck you, unlocks all weeks
+if (week <= weekData().length - 1 /*&& FlxG.save.data.weekUnlocked == week*/ // fuck you, unlocks all weeks
 	{
 		weekUnlocked.push(true);
 		trace('Week ' + week + ' beat (Week ' + (week + 1) + ' unlocked)');
@@ -471,17 +471,17 @@ public static function unlockNextWeek(week:Int):Void
 
 override function beatHit()
 {
-	super.beatHit();
+super.beatHit();
 
-	if (curBeat % 2 == 0)
-	{
-		grpWeekCharacters.members[0].bopHead();
-		grpWeekCharacters.members[1].bopHead();
-	}
-	else if (weekCharacters[curWeek][0] == 'spooky' || weekCharacters[curWeek][0] == 'gf')
-		grpWeekCharacters.members[0].bopHead();
+if (curBeat % 2 == 0)
+{
+	grpWeekCharacters.members[0].bopHead();
+	grpWeekCharacters.members[1].bopHead();
+}
+else if (weekCharacters[curWeek][0] == 'spooky' || weekCharacters[curWeek][0] == 'gf')
+	grpWeekCharacters.members[0].bopHead();
 
-	if (weekCharacters[curWeek][2] == 'spooky' || weekCharacters[curWeek][2] == 'gf')
-		grpWeekCharacters.members[2].bopHead();
+if (weekCharacters[curWeek][2] == 'spooky' || weekCharacters[curWeek][2] == 'gf')
+	grpWeekCharacters.members[2].bopHead();
 }
 }

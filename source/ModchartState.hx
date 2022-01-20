@@ -1,5 +1,6 @@
 // this file is for modchart things, this is to declutter playstate.hx
 // Lua
+#if FEATURE_LUAMODCHART
 import LuaClass.LuaGame;
 import LuaClass.LuaWindow;
 import LuaClass.LuaSprite;

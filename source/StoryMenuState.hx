@@ -312,6 +312,7 @@ class StoryMenuState extends MusicBeatState
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			movedBack = true;
+			switchState(new MainMenuState());
 		}
 
 		if (FlxG.sound.music != null)
@@ -363,122 +364,126 @@ class StoryMenuState extends MusicBeatState
 			Debug.logTrace("starting the thing");
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
-				function changeDifficulty(change:Int = 0):Void
-				{
-					curDifficulty += change;
+				switchState(new PlayState(), true);
+			});
+		}
+	}
 
-					if (curDifficulty < 0)
-						curDifficulty = 2;
-					if (curDifficulty > 2)
-						curDifficulty = 0;
+	function changeDifficulty(change:Int = 0):Void
+	{
+		curDifficulty += change;
 
-					sprDifficulty.offset.x = 0;
+		if (curDifficulty < 0)
+			curDifficulty = 2;
+		if (curDifficulty > 2)
+			curDifficulty = 0;
 
-					switch (curDifficulty)
-					{
-						case 0:
-							sprDifficulty.animation.play('easy');
-							sprDifficulty.offset.x = 20;
-						case 1:
-							sprDifficulty.animation.play('normal');
-							sprDifficulty.offset.x = 70;
-						case 2:
-							sprDifficulty.animation.play('hard');
-							sprDifficulty.offset.x = 20;
-					}
+		sprDifficulty.offset.x = 0;
 
-					sprDifficulty.alpha = 0;
+		switch (curDifficulty)
+		{
+			case 0:
+				sprDifficulty.animation.play('easy');
+				sprDifficulty.offset.x = 20;
+			case 1:
+				sprDifficulty.animation.play('normal');
+				sprDifficulty.offset.x = 70;
+			case 2:
+				sprDifficulty.animation.play('hard');
+				sprDifficulty.offset.x = 20;
+		}
 
-					// USING THESE WEIRD VALUES SO THAT IT DOESNT FLOAT UP
-					sprDifficulty.y = leftArrow.y - 15;
-					intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
+		sprDifficulty.alpha = 0;
 
-					#if !switch
-					intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
-					#end
+		// USING THESE WEIRD VALUES SO THAT IT DOESNT FLOAT UP
+		sprDifficulty.y = leftArrow.y - 15;
+		intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
 
-					FlxTween.tween(sprDifficulty, {y: leftArrow.y + 15, alpha: 1}, 0.07);
-				}
+		#if !switch
+		intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
+		#end
 
-				var lerpScore:Int = 0;
-				var intendedScore:Int = 0;
+		FlxTween.tween(sprDifficulty, {y: leftArrow.y + 15, alpha: 1}, 0.07);
+	}
 
-				function changeWeek(change:Int = 0):Void
-				{
-					curWeek += change;
+	var lerpScore:Int = 0;
+	var intendedScore:Int = 0;
 
-					if (curWeek >= weekData().length)
-						curWeek = 0;
-					if (curWeek < 0)
-						curWeek = weekData().length - 1;
+	function changeWeek(change:Int = 0):Void
+	{
+		curWeek += change;
 
-					var bullShit:Int = 0;
+		if (curWeek >= weekData().length)
+			curWeek = 0;
+		if (curWeek < 0)
+			curWeek = weekData().length - 1;
 
-					for (item in grpWeekText.members)
-					{
-						item.targetY = bullShit - curWeek;
-						if (item.targetY == Std.int(0) && weekUnlocked[curWeek])
-							item.alpha = 1;
-						else
-							item.alpha = 0.6;
-						bullShit++;
-					}
+		var bullShit:Int = 0;
 
-					FlxG.sound.play(Paths.sound('scrollMenu'));
+		for (item in grpWeekText.members)
+		{
+			item.targetY = bullShit - curWeek;
+			if (item.targetY == Std.int(0) && weekUnlocked[curWeek])
+				item.alpha = 1;
+			else
+				item.alpha = 0.6;
+			bullShit++;
+		}
 
-					updateText();
-				}
+		FlxG.sound.play(Paths.sound('scrollMenu'));
 
-				function updateText()
-				{
-					grpWeekCharacters.members[0].setCharacter(weekCharacters[curWeek][0]);
-					grpWeekCharacters.members[1].setCharacter(weekCharacters[curWeek][1]);
-					grpWeekCharacters.members[2].setCharacter(weekCharacters[curWeek][2]);
+		updateText();
+	}
 
-					txtTracklist.text = "Tracks\n";
-					var stringThing:Array<String> = weekData()[curWeek];
+	function updateText()
+	{
+		grpWeekCharacters.members[0].setCharacter(weekCharacters[curWeek][0]);
+		grpWeekCharacters.members[1].setCharacter(weekCharacters[curWeek][1]);
+		grpWeekCharacters.members[2].setCharacter(weekCharacters[curWeek][2]);
 
-					for (i in stringThing)
-						txtTracklist.text += "\n" + i;
+		txtTracklist.text = "Tracks\n";
+		var stringThing:Array<String> = weekData()[curWeek];
 
-					txtTracklist.text = txtTracklist.text.toUpperCase();
+		for (i in stringThing)
+			txtTracklist.text += "\n" + i;
 
-					txtTracklist.screenCenter(X);
-					txtTracklist.x -= FlxG.width * 0.35;
+		txtTracklist.text = txtTracklist.text.toUpperCase();
 
-					txtTracklist.text += "\n";
+		txtTracklist.screenCenter(X);
+		txtTracklist.x -= FlxG.width * 0.35;
 
-					#if !switch
-					intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
-					#end
-				}
-				{
-					public static function unlockNextWeek(week:Int):Void
-				}
-				{
-					if (week <= weekData().length - 1 /*&& FlxG.save.data.weekUnlocked == week*/) // fuck you, unlocks all weeks
-					{
-						weekUnlocked.push(true);
-						trace('Week ' + week + ' beat (Week ' + (week + 1) + ' unlocked)');
-					}
+		txtTracklist.text += "\n";
 
-					FlxG.save.data.weekUnlocked = weekUnlocked.length - 1;
-					FlxG.save.flush();
-				}
+		#if !switch
+		intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
+		#end
+	}
 
-				override function beatHit()
-				{
-					super.beatHit();
+	public static function unlockNextWeek(week:Int):Void
+	{
+		if (week <= weekData().length - 1 /*&& FlxG.save.data.weekUnlocked == week*/) // fuck you, unlocks all weeks
+		{
+			weekUnlocked.push(true);
+			trace('Week ' + week + ' beat (Week ' + (week + 1) + ' unlocked)');
+		}
 
-					if (curBeat % 2 == 0)
-					{
-						grpWeekCharacters.members[0].bopHead();
-						grpWeekCharacters.members[1].bopHead();
-					}
-					else if (weekCharacters[curWeek][0] == 'spooky' || weekCharacters[curWeek][0] == 'gf')
-						grpWeekCharacters.members[0].bopHead();
+		FlxG.save.data.weekUnlocked = weekUnlocked.length - 1;
+		FlxG.save.flush();
+	}
 
-					if (weekCharacters[curWeek][2] == 'spooky' || weekCharacters[curWeek][2] == 'gf')
-						grpWeekCharacters.members[2].bopHead();
-				}
-			}
+	override function beatHit()
+	{
+		super.beatHit();
+
+		if (curBeat % 2 == 0)
+		{
+			grpWeekCharacters.members[0].bopHead();
+			grpWeekCharacters.members[1].bopHead();
+		}
+		else if (weekCharacters[curWeek][0] == 'spooky' || weekCharacters[curWeek][0] == 'gf')
+			grpWeekCharacters.members[0].bopHead();
+
+		if (weekCharacters[curWeek][2] == 'spooky' || weekCharacters[curWeek][2] == 'gf')
+			grpWeekCharacters.members[2].bopHead();
+	}
+}

@@ -353,7 +353,7 @@ class PlayState extends MusicBeatState
 
 	var superCreateCalled:Bool = false;
 
-	override public function load()
+	public function load()
 	{
 		PauseSubState.FUCKINGDONTDOITVLCMEDIAPLAYERISWEARTOGOD = false;
 
@@ -483,8 +483,6 @@ class PlayState extends MusicBeatState
 		Debug.logTrace("creating stage");
 
 		LoadingScreen.progress += 20;
-
-		super.load();
 	}
 
 	public var dadWidth:Float = 0;
@@ -492,7 +490,6 @@ class PlayState extends MusicBeatState
 	override public function create()
 	{
 		Stage = new Stage(SONG.stage);
-		Debug.logTrace(loadedCompletely + " - loaded");
 		FlxG.mouse.visible = false;
 		instance = this;
 
@@ -651,10 +648,6 @@ class PlayState extends MusicBeatState
 
 			Debug.logTrace("starting vis");
 			if (coolingHandler == null)
-			{
-				coolingHandler = new MP4Handler();
-			}
-			else
 			{
 				coolingVideo.loadGraphic(coolingHandler.bitmap.bitmapData);
 
@@ -1139,21 +1132,6 @@ class PlayState extends MusicBeatState
 		healthBar.scrollFactor.set();
 		// healthBar
 
-		// Add Kade Engine watermark
-		kadeEngineWatermark = new FlxText(4, healthBarBG.y
-			+ 50, 0,
-			SONG.songName
-			+ (FlxMath.roundDecimal(songMultiplier, 2) != 1.00 ? " (" + FlxMath.roundDecimal(songMultiplier, 2) + "x)" : "")
-			+ " - "
-			+ CoolUtil.difficultyFromInt(storyDifficulty),
-			16);
-		kadeEngineWatermark.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		kadeEngineWatermark.scrollFactor.set();
-		add(kadeEngineWatermark);
-
-		if (PlayStateChangeables.useDownscroll)
-			kadeEngineWatermark.y = FlxG.height * 0.9 + 45;
-
 		scoreTxt = new FlxText(FlxG.width / 2 - 235, healthBarBG.y + 50, 0, "", 20);
 		scoreTxt.screenCenter(X);
 		scoreTxt.scrollFactor.set();
@@ -1533,7 +1511,6 @@ class PlayState extends MusicBeatState
 		// generateStaticArrows(1);
 
 		talking = false;
-		startedCountdown = true;
 		startingSong = true;
 		camHUD.visible = true;
 		Conductor.songPosition = 0;
@@ -1952,7 +1929,6 @@ class PlayState extends MusicBeatState
 		if (Stage.curStage == "hexw" && SONG.songId.toLowerCase() == "cooling")
 		{
 			var perecentSupposed = (FlxG.sound.music.time / songMultiplier) / (FlxG.sound.music.length / songMultiplier);
-			coolingHandler.bitmap.seek(perecentSupposed); // I laughed my ass off so hard when I found out this was a fuckin PERCENTAGE
 			Debug.logTrace("doing the thing");
 			FlxTween.tween(coolingVideo, {alpha: 1}, 1);
 		}
@@ -2221,8 +2197,6 @@ class PlayState extends MusicBeatState
 						var lowerDir:String = dataSuffix[i].toLowerCase();
 
 					babyArrow.animation.addByPrefix('static', 'arrow' + dataSuffix[i]);
-					babyArrow.animation.addByPrefix('pressed', lowerDir + ' press', 24, false);
-					babyArrow.animation.addByPrefix('confirm', lowerDir + ' confirm', 24, false);
 
 					babyArrow.x += Note.swagWidth * i;
 
@@ -2337,8 +2311,6 @@ class PlayState extends MusicBeatState
 			if (Stage.curStage == "hexw" && songStarted && SONG.songId.toLowerCase() == "cooling")
 			{
 				var perecentSupposed = (FlxG.sound.music.time / songMultiplier) / (FlxG.sound.music.length / songMultiplier);
-				coolingHandler.bitmap.seek(perecentSupposed); // I laughed my ass off so hard when I found out this was a fuckin PERCENTAGE
-				coolingHandler.bitmap.resume();
 			}
 
 			if (startTimer != null)

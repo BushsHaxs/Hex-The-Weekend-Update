@@ -33,7 +33,6 @@ jobs:
           haxelib install lime
           haxelib install openfl
           haxelib --never git flixel https://github.com/ThatDisabledKid/flixel
-          haxelib run lime setup flixel
           haxelib run lime setup
           haxelib install flixel-tools
           haxelib git flixel-ui https://github.com/BushsHaxs/flixel-ui-fix-for-hex

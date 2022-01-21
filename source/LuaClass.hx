@@ -757,1260 +757,1254 @@ class LuaReceptor extends LuaClass
 			FlxTween.tween(receptor, {x: xp}, time, {
 				onUpdate: function(tw)
 				{
-					luaObject.defaultX = receptor.x;
 				}
-			});
-		}
-		else
-			FlxTween.tween(receptor, {x: xp, y: yp}, time, {
-				onUpdate: function(tw)
-				{
-					luaObject.defaultX = receptor.x;
-					luaObject.defaultY = receptor.y;
-				}
-			});
-
-		return 0;
-	}
-
-	private static function tweenAngle(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = angle
-		// 3 = time
-		var nangle = LuaL.checknumber(state, 2);
-		var time = LuaL.checknumber(state, 3);
-
-		Lua.getfield(state, 1, "id");
-		var index = Std.parseInt(Lua.tostring(state, -1).split('_')[1]);
-
-		var receptor = findReceptor(index);
-
-		if (receptor == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find receptor " + index + ")");
-			return 0;
-		}
-
-		FlxTween.tween(receptor, {modAngle: nangle}, time);
-
-		return 0;
-	}
-
-	private static function tweenAlpha(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = alpha
-		// 3 = time
-		var nalpha = LuaL.checknumber(state, 2);
-		var time = LuaL.checknumber(state, 3);
-
-		Lua.getfield(state, 1, "id");
-		var index = Std.parseInt(Lua.tostring(state, -1).split('_')[1]);
-
-		var receptor = findReceptor(index);
-
-		if (receptor == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find receptor " + index + ")");
-			return 0;
-		}
-
-		FlxTween.tween(receptor, {alpha: nalpha}, time);
-
-		return 0;
-	}
-
-	private static var tweenPosC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenPos);
-	private static var tweenAngleC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAngle);
-	private static var tweenAlphaC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAlpha);
-
-	private function SetNumProperty(l:State)
-	{
-		// 1 = self
-		// 2 = key
-		// 3 = value
-		// 4 = metatable
-		if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
-		{
-			LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
-			return 0;
-		}
-
-		sprite.modifiedByLua = true;
-
-		Reflect.setProperty(sprite, Lua.tostring(l, 2), Lua.tonumber(l, 3));
-		return 0;
-	}
-
-	override function Register(l:State)
-	{
-		state = l;
-		super.Register(l);
-		trace("Registered " + className);
-	}
-}
-
-class LuaCamera extends LuaClass
-{ // again, stolen from andromeda but improved a lot for better thinking interoperability (I made that up)
-	private static var state:State;
-
-	public var cam:FlxCamera;
-
-	public function new(connectedCamera:FlxCamera, name:String)
-	{
-		super();
-		cam = connectedCamera;
-
-		className = name;
-
-		properties = [
-			"alpha" => {
-				defaultValue: 1,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedCamera.alpha);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"angle" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedCamera.angle);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"x" => {
-				defaultValue: connectedCamera.x,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedCamera.x);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"y" => {
-				defaultValue: connectedCamera.y,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedCamera.y);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"id" => {
-				defaultValue: className,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushstring(l, className);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"tweenZoom" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, tweenZoomC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "tweenZoom is read-only.");
-					return 0;
-				}
-			},
-
-			"tweenPos" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, tweenPosC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "tweenPos is read-only.");
-					return 0;
-				}
-			},
-
-			"tweenAlpha" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, tweenAlphaC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "tweenAlpha is read-only.");
-					return 0;
-				}
-			},
-
-			"tweenAngle" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, tweenAngleC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "tweenAngle is read-only.");
-					return 0;
-				}
-			},
-
-			"scaleX" => {
-				defaultValue: connectedCamera.flashSprite.scaleX,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedCamera.flashSprite.scaleX);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-			"scaleY" => {
-				defaultValue: connectedCamera.flashSprite.scaleY,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedCamera.flashSprite.scaleY);
-					return 1;
-				},
-				setter: SetNumProperty
 			}
-		];
-
-		LuaStorage.ListOfCameras.push(this);
-	}
-
-	private function SetNumProperty(l:State)
-	{
-		// 1 = self
-		// 2 = key
-		// 3 = value
-		// 4 = metatable
-		if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
-		{
-			LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
-			return 0;
-		}
-		Reflect.setProperty(cam, Lua.tostring(l, 2), Lua.tonumber(l, 3));
-		return 0;
-	}
-
-	private static function tweenZoom(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = zoom
-		// 3 = time
-		var nzoom = LuaL.checknumber(state, 2);
-		var time = LuaL.checknumber(state, 3);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var camera:FlxCamera = null;
-
-		for (i in LuaStorage.ListOfCameras)
-		{
-			if (i.className == index)
-			{
-				camera = i.cam;
-			}
-		}
-
-		if (camera == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find camera " + index + ")");
-			return 0;
-		}
-
-		FlxTween.tween(camera, {zoom: nzoom}, time);
-
-		return 0;
-	}
-
-	private static var tweenZoomC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenZoom);
-
-	private static function tweenPos(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = x
-		// 3 = y
-		// 4 = time
-		var xp = LuaL.checknumber(state, 2);
-		var yp = LuaL.checknumber(state, 3);
-		var time = LuaL.checknumber(state, 4);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var camera:FlxCamera = null;
-
-		for (i in LuaStorage.ListOfCameras)
-		{
-			if (i.className == index)
-				camera = i.cam;
-		}
-
-		if (camera == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find camera " + index + ")");
-			return 0;
-		}
-
-		FlxTween.tween(camera, {x: xp, y: yp}, time);
-
-		return 0;
-	}
-
-	private static function tweenAngle(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = angle
-		// 3 = time
-		var nangle = LuaL.checknumber(state, 2);
-		var time = LuaL.checknumber(state, 3);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var camera:FlxCamera = null;
-
-		for (i in LuaStorage.ListOfCameras)
-		{
-			if (i.className == index)
-				camera = i.cam;
-		}
-
-		if (camera == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find camera " + index + ")");
-			return 0;
-		}
-
-		FlxTween.tween(camera, {angle: nangle}, time);
-
-		return 0;
-	}
-
-	private static function tweenAlpha(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = alpha
-		// 3 = time
-		var nalpha = LuaL.checknumber(state, 2);
-		var time = LuaL.checknumber(state, 3);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var camera:FlxCamera = null;
-
-		for (i in LuaStorage.ListOfCameras)
-		{
-			if (i.className == index)
-				camera = i.cam;
-		}
-
-		if (camera == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find camera " + index + ")");
-			return 0;
-		}
-
-		FlxTween.tween(camera, {alpha: nalpha}, time);
-
-		return 0;
-	}
-
-	private static var tweenPosC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenPos);
-	private static var tweenAngleC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAngle);
-	private static var tweenAlphaC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAlpha);
-
-	override function Register(l:State)
-	{
-		state = l;
-		super.Register(l);
-		trace("Registered " + className);
-	}
-}
-
-class LuaCharacter extends LuaClass
-{ // again, stolen from andromeda but improved a lot for better thinking interoperability (I made that up)
-	private static var state:State;
-
-	public var char:Character;
-	public var isPlayer:Bool = false;
-
-	public static var ListOfCharacters:Array<LuaCharacter> = [];
-
-	public function new(connectedCharacter:Character, name:String)
-	{
-		super();
-		className = name;
-
-		char = connectedCharacter;
-
-		isPlayer = char.isPlayer;
-
-		properties = [
-			"alpha" => {
-				defaultValue: 1,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedCharacter.alpha);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"angle" => {
-				defaultValue: 1,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedCharacter.angle);
-					return 1;
-				},
-				setter: function(l:State):Int
-				{
-					// 1 = self
-					// 2 = key
-					// 3 = value
-					// 4 = metatable
-					if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
+			else
+				FlxTween.tween(receptor, {x: xp, y: yp}, time, {
+					onUpdate: function(tw)
 					{
-						LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
+						luaObject.defaultX = receptor.x;
+						luaObject.defaultY = receptor.y;
+					}
+				});
+
+				return 0;
+		}
+
+		private static function tweenAngle(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = angle
+			// 3 = time
+			var nangle = LuaL.checknumber(state, 2);
+			var time = LuaL.checknumber(state, 3);
+
+			Lua.getfield(state, 1, "id");
+			var index = Std.parseInt(Lua.tostring(state, -1).split('_')[1]);
+
+			var receptor = findReceptor(index);
+
+			if (receptor == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find receptor " + index + ")");
+				return 0;
+			}
+
+			FlxTween.tween(receptor, {modAngle: nangle}, time);
+
+			return 0;
+		}
+
+		private static function tweenAlpha(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = alpha
+			// 3 = time
+			var nalpha = LuaL.checknumber(state, 2);
+			var time = LuaL.checknumber(state, 3);
+
+			Lua.getfield(state, 1, "id");
+			var index = Std.parseInt(Lua.tostring(state, -1).split('_')[1]);
+
+			var receptor = findReceptor(index);
+
+			if (receptor == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find receptor " + index + ")");
+				return 0;
+			}
+
+			FlxTween.tween(receptor, {alpha: nalpha}, time);
+
+			return 0;
+		}
+
+		private static var tweenPosC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenPos);
+		private static var tweenAngleC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAngle);
+		private static var tweenAlphaC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAlpha);
+
+		private function SetNumProperty(l:State)
+		{
+			// 1 = self
+			// 2 = key
+			// 3 = value
+			// 4 = metatable
+			if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
+			{
+				LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
+				return 0;
+			}
+
+			sprite.modifiedByLua = true;
+
+			Reflect.setProperty(sprite, Lua.tostring(l, 2), Lua.tonumber(l, 3));
+			return 0;
+		}
+
+		override function Register(l:State)
+		{
+			state = l;
+			super.Register(l);
+			trace("Registered " + className);
+		}
+	}
+
+	class LuaCamera extends LuaClass
+	{ // again, stolen from andromeda but improved a lot for better thinking interoperability (I made that up)
+		private static var state:State;
+
+		public var cam:FlxCamera;
+
+		public function new(connectedCamera:FlxCamera, name:String)
+		{
+			super();
+			cam = connectedCamera;
+
+			className = name;
+
+			properties = [
+				"alpha" => {
+					defaultValue: 1,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedCamera.alpha);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"angle" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedCamera.angle);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"x" => {
+					defaultValue: connectedCamera.x,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedCamera.x);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"y" => {
+					defaultValue: connectedCamera.y,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedCamera.y);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"id" => {
+					defaultValue: className,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushstring(l, className);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"tweenZoom" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, tweenZoomC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "tweenZoom is read-only.");
 						return 0;
 					}
-
-					var angle = Lua.tonumber(l, 3);
-					connectedCharacter.angle = angle;
-
-					LuaClass.DefaultSetter(l);
-					return 0;
-				}
-			},
-
-			"x" => {
-				defaultValue: connectedCharacter.x,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedCharacter.x);
-					return 1;
 				},
-				setter: SetNumProperty
-			},
 
-			"tweenPos" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, tweenPosC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "tweenPos is read-only.");
-					return 0;
-				}
-			},
-
-			"id" => {
-				defaultValue: name,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushstring(l, name);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"tweenAlpha" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, tweenAlphaC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "tweenAlpha is read-only.");
-					return 0;
-				}
-			},
-
-			"tweenAngle" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, tweenAngleC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "tweenAngle is read-only.");
-					return 0;
-				}
-			},
-
-			"changeCharacter" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, changeCharacterC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "changeCharacter is read-only.");
-					return 0;
-				}
-			},
-
-			"playAnim" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, playAnimC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "playAnim is read-only.");
-					return 0;
-				}
-			},
-
-			"y" => {
-				defaultValue: connectedCharacter.y,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedCharacter.y);
-					return 1;
-				},
-				setter: SetNumProperty
-			}
-
-		];
-
-		ListOfCharacters.push(this);
-	}
-
-	private static function findNote(time:Float, data:Int)
-	{
-		for (i in PlayState.instance.notes)
-		{
-			if (i.strumTime == time && i.noteData == data)
-			{
-				return i;
-			}
-		}
-		return null;
-	}
-
-	private static function tweenPos(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = x
-		// 3 = y
-		// 4 = time
-		var xp = LuaL.checknumber(state, 2);
-		var yp = LuaL.checknumber(state, 3);
-		var time = LuaL.checknumber(state, 4);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var char:Character = null;
-
-		for (i in ListOfCharacters)
-		{
-			if (i.className == index)
-				char = i.char;
-		}
-
-		if (char == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find character " + index + ")");
-			return 0;
-		}
-
-		FlxTween.tween(char, {x: xp, y: yp}, time);
-
-		return 0;
-	}
-
-	private static function tweenAngle(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = angle
-		// 3 = time
-		var nangle = LuaL.checknumber(state, 2);
-		var time = LuaL.checknumber(state, 3);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var char:Character = null;
-
-		for (i in ListOfCharacters)
-		{
-			if (i.className == index)
-				char = i.char;
-		}
-
-		if (char == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find character " + index + ")");
-			return 0;
-		}
-
-		FlxTween.tween(char, {angle: nangle}, time);
-
-		return 0;
-	}
-
-	private static function tweenAlpha(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = alpha
-		// 3 = time
-		var nalpha = LuaL.checknumber(state, 2);
-		var time = LuaL.checknumber(state, 3);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var char:Character = null;
-
-		for (i in ListOfCharacters)
-		{
-			if (i.className == index)
-				char = i.char;
-		}
-
-		if (char == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find character " + index + ")");
-			return 0;
-		}
-
-		FlxTween.tween(char, {alpha: nalpha}, time);
-
-		return 0;
-	}
-
-	private static function changeCharacter(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = newName
-		// 3 = x
-		// 4 = y
-		var newName = LuaL.checkstring(state, 2);
-		var x = LuaL.checknumber(state, 3);
-		var y = LuaL.checknumber(state, 4);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var char:Character = null;
-		var property:LuaCharacter = null;
-
-		for (i in ListOfCharacters)
-		{
-			if (i.className == index)
-			{
-				char = i.char;
-				property = i;
-			}
-		}
-
-		trace("fuck " + char);
-
-		if (char == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find character " + index + ")");
-			return 0;
-		}
-
-		PlayState.instance.remove(char);
-
-		PlayState.dad = new Character(x, y, newName, char.isPlayer);
-
-		property.char = PlayState.dad;
-
-		PlayState.instance.add(PlayState.dad);
-
-		return 0;
-	}
-
-	private static function playAnim(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = animation
-		var anim = LuaL.checkstring(state, 2);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var char:Character = null;
-
-		for (i in ListOfCharacters)
-		{
-			if (i.className == index)
-			{
-				char = i.char;
-			}
-		}
-
-		if (char == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find character " + index + ")");
-			return 0;
-		}
-
-		char.playAnim(anim);
-
-		return 0;
-	}
-
-	private static var playAnimC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(playAnim);
-	private static var changeCharacterC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(changeCharacter);
-	private static var tweenPosC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenPos);
-	private static var tweenAngleC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAngle);
-	private static var tweenAlphaC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAlpha);
-
-	private function SetNumProperty(l:State)
-	{
-		// 1 = self
-		// 2 = key
-		// 3 = value
-		// 4 = metatable
-		if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
-		{
-			LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
-			return 0;
-		}
-		Reflect.setProperty(char, Lua.tostring(l, 2), Lua.tonumber(l, 3));
-		return 0;
-	}
-
-	override function Register(l:State)
-	{
-		state = l;
-		super.Register(l);
-	}
-}
-
-class LuaSprite extends LuaClass
-{ // again, stolen from andromeda but improved a lot for better thinking interoperability (I made that up)
-	private static var state:State;
-
-	public var sprite:FlxSprite;
-
-	public static var ListOfSprites:Array<LuaSprite> = [];
-
-	public function new(connectedSprite:FlxSprite, name:String)
-	{
-		super();
-		className = name;
-
-		properties = [
-			"alpha" => {
-				defaultValue: 1,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedSprite.alpha);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"angle" => {
-				defaultValue: 1,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedSprite.angle);
-					return 1;
-				},
-				setter: function(l:State):Int
-				{
-					// 1 = self
-					// 2 = key
-					// 3 = value
-					// 4 = metatable
-					if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
+				"tweenPos" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
 					{
-						LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
+						Lua.pushcfunction(l, tweenPosC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "tweenPos is read-only.");
 						return 0;
 					}
+				},
 
-					var angle = Lua.tonumber(l, 3);
-					connectedSprite.angle = angle;
+				"tweenAlpha" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, tweenAlphaC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "tweenAlpha is read-only.");
+						return 0;
+					}
+				},
 
-					LuaClass.DefaultSetter(l);
-					return 0;
+				"tweenAngle" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, tweenAngleC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "tweenAngle is read-only.");
+						return 0;
+					}
+				},
+
+				"scaleX" => {
+					defaultValue: connectedCamera.flashSprite.scaleX,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedCamera.flashSprite.scaleX);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+				"scaleY" => {
+					defaultValue: connectedCamera.flashSprite.scaleY,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedCamera.flashSprite.scaleY);
+						return 1;
+					},
+					setter: SetNumProperty
 				}
-			},
+			];
 
-			"x" => {
-				defaultValue: connectedSprite.x,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedSprite.x);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
+			LuaStorage.ListOfCameras.push(this);
+		}
 
-			"tweenPos" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, tweenPosC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "tweenPos is read-only.");
-					return 0;
-				}
-			},
-
-			"id" => {
-				defaultValue: name,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushstring(l, name);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"tweenAlpha" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, tweenAlphaC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "tweenAlpha is read-only.");
-					return 0;
-				}
-			},
-
-			"tweenAngle" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, tweenAngleC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "tweenAngle is read-only.");
-					return 0;
-				}
-			},
-
-			"destroy" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, destroyC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "destroy is read-only.");
-					return 0;
-				}
-			},
-
-			"y" => {
-				defaultValue: connectedSprite.y,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, connectedSprite.y);
-					return 1;
-				},
-				setter: SetNumProperty
-			}
-
-		];
-
-		ListOfSprites.push(this);
-	}
-
-	private static function findNote(time:Float, data:Int)
-	{
-		for (i in PlayState.instance.notes)
+		private function SetNumProperty(l:State)
 		{
-			if (i.strumTime == time && i.noteData == data)
+			// 1 = self
+			// 2 = key
+			// 3 = value
+			// 4 = metatable
+			if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
 			{
-				return i;
+				LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
+				return 0;
 			}
-		}
-		return null;
-	}
-
-	private static function tweenPos(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = x
-		// 3 = y
-		// 4 = time
-		var xp = LuaL.checknumber(state, 2);
-		var yp = LuaL.checknumber(state, 3);
-		var time = LuaL.checknumber(state, 4);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var sprite:FlxSprite = null;
-
-		for (i in ListOfSprites)
-		{
-			if (i.className == index)
-				sprite = i.sprite;
-		}
-
-		if (sprite == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find sprite " + index + ")");
+			Reflect.setProperty(cam, Lua.tostring(l, 2), Lua.tonumber(l, 3));
 			return 0;
 		}
 
-		FlxTween.tween(sprite, {x: xp, y: yp}, time);
-
-		return 0;
-	}
-
-	private static function tweenAngle(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = angle
-		// 3 = time
-		var nangle = LuaL.checknumber(state, 2);
-		var time = LuaL.checknumber(state, 3);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var sprite:FlxSprite = null;
-
-		for (i in ListOfSprites)
+		private static function tweenZoom(l:StatePointer):Int
 		{
-			if (i.className == index)
-				sprite = i.sprite;
-		}
+			// 1 = self
+			// 2 = zoom
+			// 3 = time
+			var nzoom = LuaL.checknumber(state, 2);
+			var time = LuaL.checknumber(state, 3);
 
-		if (sprite == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find sprite " + index + ")");
-			return 0;
-		}
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
 
-		FlxTween.tween(sprite, {angle: nangle}, time);
+			var camera:FlxCamera = null;
 
-		return 0;
-	}
-
-	private static function tweenAlpha(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = alpha
-		// 3 = time
-		var nalpha = LuaL.checknumber(state, 2);
-		var time = LuaL.checknumber(state, 3);
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var sprite:FlxSprite = null;
-
-		for (i in ListOfSprites)
-		{
-			if (i.className == index)
-				sprite = i.sprite;
-		}
-
-		if (sprite == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find sprite " + index + ")");
-			return 0;
-		}
-
-		FlxTween.tween(sprite, {alpha: nalpha}, time);
-
-		return 0;
-	}
-
-	private static function destroy(l:StatePointer):Int
-	{
-		// 1 = self
-
-		Lua.getfield(state, 1, "id");
-		var index = Lua.tostring(state, -1);
-
-		var sprite:FlxSprite = null;
-
-		for (i in ListOfSprites)
-		{
-			if (i.className == index)
-				sprite = i.sprite;
-		}
-
-		if (sprite == null)
-		{
-			LuaL.error(state, "Failure to tween (couldn't find sprite " + index + ")");
-			return 0;
-		}
-
-		PlayState.instance.remove(sprite);
-		sprite.destroy();
-
-		return 0;
-	}
-
-	private static var destroyC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(destroy);
-	private static var tweenPosC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenPos);
-	private static var tweenAngleC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAngle);
-	private static var tweenAlphaC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAlpha);
-
-	private function SetNumProperty(l:State)
-	{
-		// 1 = self
-		// 2 = key
-		// 3 = value
-		// 4 = metatable
-		if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
-		{
-			LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
-			return 0;
-		}
-		Reflect.setProperty(sprite, Lua.tostring(l, 2), Lua.tonumber(l, 3));
-		return 0;
-	}
-
-	override function Register(l:State)
-	{
-		state = l;
-		super.Register(l);
-	}
-}
-
-class LuaWindow extends LuaClass
-{ // again, stolen from andromeda but improved a lot for better thinking interoperability (I made that up)
-	private static var state:State;
-
-	public function new()
-	{
-		super();
-		className = "Window";
-
-		properties = [
-			"x" => {
-				defaultValue: Application.current.window.x,
-				getter: function(l:State, data:Any):Int
+			for (i in LuaStorage.ListOfCameras)
+			{
+				if (i.className == index)
 				{
-					Lua.pushnumber(l, Application.current.window.x);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"y" => {
-				defaultValue: Application.current.window.y,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, Application.current.window.y);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"width" => {
-				defaultValue: Application.current.window.width,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, Application.current.window.width);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"height" => {
-				defaultValue: Application.current.window.height,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, Application.current.window.height);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-
-			"tweenPos" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, tweenPosC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "tweenPos is read-only.");
-					return 0;
-				},
-			},
-		];
-	}
-
-	private static function tweenPos(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = x
-		// 3 = y
-		// 4 = time
-		var xp = LuaL.checknumber(state, 2);
-		var yp = LuaL.checknumber(state, 3);
-		var time = LuaL.checknumber(state, 4);
-
-		FlxTween.tween(Application.current.window, {x: xp, y: yp}, time);
-
-		return 0;
-	}
-
-	private static var tweenPosC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenPos);
-
-	private function SetNumProperty(l:State)
-	{
-		// 1 = self
-		// 2 = key
-		// 3 = value
-		// 4 = metatable
-		if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
-		{
-			LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
-			return 0;
-		}
-		Reflect.setProperty(Application.current.window, Lua.tostring(l, 2), Lua.tonumber(l, 3));
-		return 0;
-	}
-
-	override function Register(l:State)
-	{
-		state = l;
-		super.Register(l);
-	}
-}
-
-class LuaGame extends LuaClass
-{ // again, stolen from andromeda but improved a lot for better thinking interoperability (I made that up)
-	private static var state:State;
-
-	public function new()
-	{
-		super();
-		className = "Game";
-
-		properties = [
-
-			"health" => {
-				defaultValue: PlayState.instance.health,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, PlayState.instance.health);
-					return 1;
-				},
-				setter: function(l:State):Int
-				{
-					PlayState.instance.health = Lua.tonumber(l, 3);
-					return 0;
-				},
-			},
-
-			"accuracy" => {
-				defaultValue: PlayState.instance.accuracy,
-				getter: function(l:State, data:Any):Int
-				{
-					Lua.pushnumber(l, PlayState.instance.accuracy);
-					return 1;
-				},
-				setter: SetNumProperty
-			},
-			"changeStage" => {
-				defaultValue: 0,
-				getter: function(l:State, data:Any)
-				{
-					Lua.pushcfunction(l, changeStageC);
-					return 1;
-				},
-				setter: function(l:State)
-				{
-					LuaL.error(l, "changeStage is read-only.");
-					return 0;
-				},
+					camera = i.cam;
+				}
 			}
-		];
-	}
 
-	private static function changeStage(l:StatePointer):Int
-	{
-		// 1 = self
-		// 2 = stage
-		var stageName = LuaL.checkstring(state, 2);
+			if (camera == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find camera " + index + ")");
+				return 0;
+			}
 
-		for (i in PlayState.Stage.toAdd)
-		{
-			PlayState.instance.remove(i);
-		}
+			FlxTween.tween(camera, {zoom: nzoom}, time);
 
-		PlayState.Stage = new Stage(stageName);
-
-		for (i in PlayState.Stage.toAdd)
-		{
-			PlayState.instance.add(i);
-		}
-
-		return 0;
-	}
-
-	private static var changeStageC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(changeStage);
-
-	private function SetNumProperty(l:State)
-	{
-		// 1 = self
-		// 2 = key
-		// 3 = value
-		// 4 = metatable
-		if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
-		{
-			LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
 			return 0;
 		}
-		Reflect.setProperty(Application.current.window, Lua.tostring(l, 2), Lua.tonumber(l, 3));
-		return 0;
-	}
 
-	override function Register(l:State)
-	{
-		state = l;
-		super.Register(l);
+		private static var tweenZoomC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenZoom);
+
+		private static function tweenPos(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = x
+			// 3 = y
+			// 4 = time
+			var xp = LuaL.checknumber(state, 2);
+			var yp = LuaL.checknumber(state, 3);
+			var time = LuaL.checknumber(state, 4);
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var camera:FlxCamera = null;
+
+			for (i in LuaStorage.ListOfCameras)
+			{
+				if (i.className == index)
+					camera = i.cam;
+			}
+
+			if (camera == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find camera " + index + ")");
+				return 0;
+			}
+
+			FlxTween.tween(camera, {x: xp, y: yp}, time);
+
+			return 0;
+		}
+
+		private static function tweenAngle(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = angle
+			// 3 = time
+			var nangle = LuaL.checknumber(state, 2);
+			var time = LuaL.checknumber(state, 3);
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var camera:FlxCamera = null;
+
+			for (i in LuaStorage.ListOfCameras)
+			{
+				if (i.className == index)
+					camera = i.cam;
+			}
+
+			if (camera == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find camera " + index + ")");
+				return 0;
+			}
+
+			FlxTween.tween(camera, {angle: nangle}, time);
+
+			return 0;
+		}
+
+		private static function tweenAlpha(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = alpha
+			// 3 = time
+			var nalpha = LuaL.checknumber(state, 2);
+			var time = LuaL.checknumber(state, 3);
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var camera:FlxCamera = null;
+
+			for (i in LuaStorage.ListOfCameras)
+			{
+				if (i.className == index)
+					camera = i.cam;
+			}
+
+			if (camera == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find camera " + index + ")");
+				return 0;
+			}
+
+			FlxTween.tween(camera, {alpha: nalpha}, time);
+
+			return 0;
+		}
+
+		private static var tweenPosC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenPos);
+		private static var tweenAngleC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAngle);
+		private static var tweenAlphaC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAlpha);
+
+		override function Register(l:State)
+		{
+			state = l;
+			super.Register(l);
+			trace("Registered " + className);
+		}
 	}
-}
+	class LuaCharacter extends LuaClass
+	{ // again, stolen from andromeda but improved a lot for better thinking interoperability (I made that up)
+		private static var state:State;
+
+		public var char:Character;
+		public var isPlayer:Bool = false;
+
+		public static var ListOfCharacters:Array<LuaCharacter> = [];
+
+		public function new(connectedCharacter:Character, name:String)
+		{
+			super();
+			className = name;
+
+			char = connectedCharacter;
+
+			isPlayer = char.isPlayer;
+
+			properties = [
+				"alpha" => {
+					defaultValue: 1,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedCharacter.alpha);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"angle" => {
+					defaultValue: 1,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedCharacter.angle);
+						return 1;
+					},
+					setter: function(l:State):Int
+					{
+						// 1 = self
+						// 2 = key
+						// 3 = value
+						// 4 = metatable
+						if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
+						{
+							LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
+							return 0;
+						}
+
+						var angle = Lua.tonumber(l, 3);
+						connectedCharacter.angle = angle;
+
+						LuaClass.DefaultSetter(l);
+						return 0;
+					}
+				},
+
+				"x" => {
+					defaultValue: connectedCharacter.x,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedCharacter.x);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"tweenPos" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, tweenPosC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "tweenPos is read-only.");
+						return 0;
+					}
+				},
+
+				"id" => {
+					defaultValue: name,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushstring(l, name);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"tweenAlpha" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, tweenAlphaC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "tweenAlpha is read-only.");
+						return 0;
+					}
+				},
+
+				"tweenAngle" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, tweenAngleC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "tweenAngle is read-only.");
+						return 0;
+					}
+				},
+
+				"changeCharacter" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, changeCharacterC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "changeCharacter is read-only.");
+						return 0;
+					}
+				},
+
+				"playAnim" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, playAnimC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "playAnim is read-only.");
+						return 0;
+					}
+				},
+
+				"y" => {
+					defaultValue: connectedCharacter.y,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedCharacter.y);
+						return 1;
+					},
+					setter: SetNumProperty
+				}
+
+			];
+
+			ListOfCharacters.push(this);
+		}
+
+		private static function findNote(time:Float, data:Int)
+		{
+			for (i in PlayState.instance.notes)
+			{
+				if (i.strumTime == time && i.noteData == data)
+				{
+					return i;
+				}
+			}
+			return null;
+		}
+
+		private static function tweenPos(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = x
+			// 3 = y
+			// 4 = time
+			var xp = LuaL.checknumber(state, 2);
+			var yp = LuaL.checknumber(state, 3);
+			var time = LuaL.checknumber(state, 4);
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var char:Character = null;
+
+			for (i in ListOfCharacters)
+			{
+				if (i.className == index)
+					char = i.char;
+			}
+
+			if (char == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find character " + index + ")");
+				return 0;
+			}
+
+			FlxTween.tween(char, {x: xp, y: yp}, time);
+
+			return 0;
+		}
+
+		private static function tweenAngle(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = angle
+			// 3 = time
+			var nangle = LuaL.checknumber(state, 2);
+			var time = LuaL.checknumber(state, 3);
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var char:Character = null;
+
+			for (i in ListOfCharacters)
+			{
+				if (i.className == index)
+					char = i.char;
+			}
+
+			if (char == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find character " + index + ")");
+				return 0;
+			}
+
+			FlxTween.tween(char, {angle: nangle}, time);
+
+			return 0;
+		}
+
+		private static function tweenAlpha(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = alpha
+			// 3 = time
+			var nalpha = LuaL.checknumber(state, 2);
+			var time = LuaL.checknumber(state, 3);
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var char:Character = null;
+
+			for (i in ListOfCharacters)
+			{
+				if (i.className == index)
+					char = i.char;
+			}
+
+			if (char == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find character " + index + ")");
+				return 0;
+			}
+
+			FlxTween.tween(char, {alpha: nalpha}, time);
+
+			return 0;
+		}
+
+		private static function changeCharacter(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = newName
+			// 3 = x
+			// 4 = y
+			var newName = LuaL.checkstring(state, 2);
+			var x = LuaL.checknumber(state, 3);
+			var y = LuaL.checknumber(state, 4);
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var char:Character = null;
+			var property:LuaCharacter = null;
+
+			for (i in ListOfCharacters)
+			{
+				if (i.className == index)
+				{
+					char = i.char;
+					property = i;
+				}
+			}
+
+			trace("fuck " + char);
+
+			if (char == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find character " + index + ")");
+				return 0;
+			}
+
+			PlayState.instance.remove(char);
+
+			PlayState.dad = new Character(x, y, newName, char.isPlayer);
+
+			property.char = PlayState.dad;
+
+			PlayState.instance.add(PlayState.dad);
+
+			return 0;
+		}
+
+		private static function playAnim(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = animation
+			var anim = LuaL.checkstring(state, 2);
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var char:Character = null;
+
+			for (i in ListOfCharacters)
+			{
+				if (i.className == index)
+				{
+					char = i.char;
+				}
+			}
+
+			if (char == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find character " + index + ")");
+				return 0;
+			}
+
+			char.playAnim(anim);
+
+			return 0;
+		}
+
+		private static var playAnimC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(playAnim);
+		private static var changeCharacterC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(changeCharacter);
+		private static var tweenPosC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenPos);
+		private static var tweenAngleC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAngle);
+		private static var tweenAlphaC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAlpha);
+
+		private function SetNumProperty(l:State)
+		{
+			// 1 = self
+			// 2 = key
+			// 3 = value
+			// 4 = metatable
+			if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
+			{
+				LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
+				return 0;
+			}
+			Reflect.setProperty(char, Lua.tostring(l, 2), Lua.tonumber(l, 3));
+			return 0;
+		}
+
+		override function Register(l:State)
+		{
+			state = l;
+			super.Register(l);
+		}
+	}
+	class LuaSprite extends LuaClass
+	{ // again, stolen from andromeda but improved a lot for better thinking interoperability (I made that up)
+		private static var state:State;
+
+		public var sprite:FlxSprite;
+
+		public static var ListOfSprites:Array<LuaSprite> = [];
+
+		public function new(connectedSprite:FlxSprite, name:String)
+		{
+			super();
+			className = name;
+
+			properties = [
+				"alpha" => {
+					defaultValue: 1,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedSprite.alpha);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"angle" => {
+					defaultValue: 1,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedSprite.angle);
+						return 1;
+					},
+					setter: function(l:State):Int
+					{
+						// 1 = self
+						// 2 = key
+						// 3 = value
+						// 4 = metatable
+						if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
+						{
+							LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
+							return 0;
+						}
+
+						var angle = Lua.tonumber(l, 3);
+						connectedSprite.angle = angle;
+
+						LuaClass.DefaultSetter(l);
+						return 0;
+					}
+				},
+
+				"x" => {
+					defaultValue: connectedSprite.x,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedSprite.x);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"tweenPos" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, tweenPosC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "tweenPos is read-only.");
+						return 0;
+					}
+				},
+
+				"id" => {
+					defaultValue: name,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushstring(l, name);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"tweenAlpha" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, tweenAlphaC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "tweenAlpha is read-only.");
+						return 0;
+					}
+				},
+
+				"tweenAngle" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, tweenAngleC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "tweenAngle is read-only.");
+						return 0;
+					}
+				},
+
+				"destroy" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, destroyC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "destroy is read-only.");
+						return 0;
+					}
+				},
+
+				"y" => {
+					defaultValue: connectedSprite.y,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, connectedSprite.y);
+						return 1;
+					},
+					setter: SetNumProperty
+				}
+
+			];
+
+			ListOfSprites.push(this);
+		}
+
+		private static function findNote(time:Float, data:Int)
+		{
+			for (i in PlayState.instance.notes)
+			{
+				if (i.strumTime == time && i.noteData == data)
+				{
+					return i;
+				}
+			}
+			return null;
+		}
+
+		private static function tweenPos(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = x
+			// 3 = y
+			// 4 = time
+			var xp = LuaL.checknumber(state, 2);
+			var yp = LuaL.checknumber(state, 3);
+			var time = LuaL.checknumber(state, 4);
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var sprite:FlxSprite = null;
+
+			for (i in ListOfSprites)
+			{
+				if (i.className == index)
+					sprite = i.sprite;
+			}
+
+			if (sprite == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find sprite " + index + ")");
+				return 0;
+			}
+
+			FlxTween.tween(sprite, {x: xp, y: yp}, time);
+
+			return 0;
+		}
+
+		private static function tweenAngle(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = angle
+			// 3 = time
+			var nangle = LuaL.checknumber(state, 2);
+			var time = LuaL.checknumber(state, 3);
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var sprite:FlxSprite = null;
+
+			for (i in ListOfSprites)
+			{
+				if (i.className == index)
+					sprite = i.sprite;
+			}
+
+			if (sprite == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find sprite " + index + ")");
+				return 0;
+			}
+
+			FlxTween.tween(sprite, {angle: nangle}, time);
+
+			return 0;
+		}
+
+		private static function tweenAlpha(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = alpha
+			// 3 = time
+			var nalpha = LuaL.checknumber(state, 2);
+			var time = LuaL.checknumber(state, 3);
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var sprite:FlxSprite = null;
+
+			for (i in ListOfSprites)
+			{
+				if (i.className == index)
+					sprite = i.sprite;
+			}
+
+			if (sprite == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find sprite " + index + ")");
+				return 0;
+			}
+
+			FlxTween.tween(sprite, {alpha: nalpha}, time);
+
+			return 0;
+		}
+
+		private static function destroy(l:StatePointer):Int
+		{
+			// 1 = self
+
+			Lua.getfield(state, 1, "id");
+			var index = Lua.tostring(state, -1);
+
+			var sprite:FlxSprite = null;
+
+			for (i in ListOfSprites)
+			{
+				if (i.className == index)
+					sprite = i.sprite;
+			}
+
+			if (sprite == null)
+			{
+				LuaL.error(state, "Failure to tween (couldn't find sprite " + index + ")");
+				return 0;
+			}
+
+			PlayState.instance.remove(sprite);
+			sprite.destroy();
+
+			return 0;
+		}
+
+		private static var destroyC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(destroy);
+		private static var tweenPosC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenPos);
+		private static var tweenAngleC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAngle);
+		private static var tweenAlphaC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenAlpha);
+
+		private function SetNumProperty(l:State)
+		{
+			// 1 = self
+			// 2 = key
+			// 3 = value
+			// 4 = metatable
+			if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
+			{
+				LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
+				return 0;
+			}
+			Reflect.setProperty(sprite, Lua.tostring(l, 2), Lua.tonumber(l, 3));
+			return 0;
+		}
+
+		override function Register(l:State)
+		{
+			state = l;
+			super.Register(l);
+		}
+	}
+	class LuaWindow extends LuaClass
+	{ // again, stolen from andromeda but improved a lot for better thinking interoperability (I made that up)
+		private static var state:State;
+
+		public function new()
+		{
+			super();
+			className = "Window";
+
+			properties = [
+				"x" => {
+					defaultValue: Application.current.window.x,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, Application.current.window.x);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"y" => {
+					defaultValue: Application.current.window.y,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, Application.current.window.y);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"width" => {
+					defaultValue: Application.current.window.width,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, Application.current.window.width);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"height" => {
+					defaultValue: Application.current.window.height,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, Application.current.window.height);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+
+				"tweenPos" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, tweenPosC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "tweenPos is read-only.");
+						return 0;
+					},
+				},
+			];
+		}
+
+		private static function tweenPos(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = x
+			// 3 = y
+			// 4 = time
+			var xp = LuaL.checknumber(state, 2);
+			var yp = LuaL.checknumber(state, 3);
+			var time = LuaL.checknumber(state, 4);
+
+			FlxTween.tween(Application.current.window, {x: xp, y: yp}, time);
+
+			return 0;
+		}
+
+		private static var tweenPosC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(tweenPos);
+
+		private function SetNumProperty(l:State)
+		{
+			// 1 = self
+			// 2 = key
+			// 3 = value
+			// 4 = metatable
+			if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
+			{
+				LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
+				return 0;
+			}
+			Reflect.setProperty(Application.current.window, Lua.tostring(l, 2), Lua.tonumber(l, 3));
+			return 0;
+		}
+
+		override function Register(l:State)
+		{
+			state = l;
+			super.Register(l);
+		}
+	}
+	class LuaGame extends LuaClass
+	{ // again, stolen from andromeda but improved a lot for better thinking interoperability (I made that up)
+		private static var state:State;
+
+		public function new()
+		{
+			super();
+			className = "Game";
+
+			properties = [
+
+				"health" => {
+					defaultValue: PlayState.instance.health,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, PlayState.instance.health);
+						return 1;
+					},
+					setter: function(l:State):Int
+					{
+						PlayState.instance.health = Lua.tonumber(l, 3);
+						return 0;
+					},
+				},
+
+				"accuracy" => {
+					defaultValue: PlayState.instance.accuracy,
+					getter: function(l:State, data:Any):Int
+					{
+						Lua.pushnumber(l, PlayState.instance.accuracy);
+						return 1;
+					},
+					setter: SetNumProperty
+				},
+				"changeStage" => {
+					defaultValue: 0,
+					getter: function(l:State, data:Any)
+					{
+						Lua.pushcfunction(l, changeStageC);
+						return 1;
+					},
+					setter: function(l:State)
+					{
+						LuaL.error(l, "changeStage is read-only.");
+						return 0;
+					},
+				}
+			];
+		}
+
+		private static function changeStage(l:StatePointer):Int
+		{
+			// 1 = self
+			// 2 = stage
+			var stageName = LuaL.checkstring(state, 2);
+
+			for (i in PlayState.Stage.toAdd)
+			{
+				PlayState.instance.remove(i);
+			}
+
+			PlayState.Stage = new Stage(stageName);
+
+			for (i in PlayState.Stage.toAdd)
+			{
+				PlayState.instance.add(i);
+			}
+
+			return 0;
+		}
+
+		private static var changeStageC:cpp.Callable<StatePointer->Int> = cpp.Callable.fromStaticFunction(changeStage);
+
+		private function SetNumProperty(l:State)
+		{
+			// 1 = self
+			// 2 = key
+			// 3 = value
+			// 4 = metatable
+			if (Lua.type(l, 3) != Lua.LUA_TNUMBER)
+			{
+				LuaL.error(l, "invalid argument #3 (number expected, got " + Lua.typename(l, Lua.type(l, 3)) + ")");
+				return 0;
+			}
+			Reflect.setProperty(Application.current.window, Lua.tostring(l, 2), Lua.tonumber(l, 3));
+			return 0;
+		}
+
+		override function Register(l:State)
+		{
+			state = l;
+			super.Register(l);
+		}
+	}
 #end

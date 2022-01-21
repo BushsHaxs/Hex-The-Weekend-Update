@@ -52,28 +52,28 @@
 	<section if="PRELOAD_ALL">
 		<library name="songs"    preload="true" />
 		<library name="shared"   preload="true" />
-		<library name="hex"    preload="true" />
-		<library name="hexMenu"    preload="true" />
-		<library name="sm"    preload="true" />
+		<library name="hex"      preload="true" />
+		<library name="hexMenu"  preload="true" />
+		<library name="sm"       preload="true" />
 	</section>
 	
 	<section if="NO_PRELOAD_ALL">
 		<library name="songs"    preload="false" />
 		<library name="shared"   preload="false" />
-		<library name="hex"    preload="false" />
-		<library name="sm"    preload="false" />
+		<library name="hex"      preload="false" />
+		<library name="sm"       preload="false" />
 	</section>
 	
 	<assets path="assets/songs"    library="songs"    exclude="*.ogg" if="web"/>
 	<assets path="assets/songs"    library="songs"    exclude="*.mp3" unless="web"/>
 	<assets path="assets/shared"   library="shared"   exclude="*.ogg" if="web"/>
 	<assets path="assets/shared"   library="shared"   exclude="*.mp3" unless="web"/>
-	<assets path="assets/hex"    library="hex"    exclude="*.ogg" if="web"/>
-	<assets path="assets/hex"    library="hex"    exclude="*.mp3" unless="web"/>
-	<assets path="assets/hexMenu"    library="hexMenu"    exclude="*.ogg" if="web"/>
-	<assets path="assets/hexMenu"    library="hexMenu"    exclude="*.mp3" unless="web"/>
-	<assets path="assets/sm"    library="sm"    exclude="*.ogg" if="web"/>
-	<assets path="assets/sm"    library="sm"    exclude="*.mp3" unless="web"/>
+	<assets path="assets/hex"      library="hex"      exclude="*.ogg" if="web"/>
+	<assets path="assets/hex"      library="hex"      exclude="*.mp3" unless="web"/>
+	<assets path="assets/hexMenu"  library="hexMenu"  exclude="*.ogg" if="web"/>
+	<assets path="assets/hexMenu"  library="hexMenu"  exclude="*.mp3" unless="web"/>
+	<assets path="assets/sm"       library="sm"    exclude="*.ogg" if="web"/>
+	<assets path="assets/sm"       library="sm"    exclude="*.mp3" unless="web"/>
 
 	<assets path="assets/videos" exclude="*.mp3" if="web"/>
 	<assets path="assets/videos" exclude="*.ogg" unless="web"/>

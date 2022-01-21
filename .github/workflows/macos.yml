@@ -32,11 +32,11 @@ jobs:
           haxelib install hxcpp > /dev/null
           haxelib install lime
           haxelib install openfl
-          haxelib --never install flixel
+          haxelib git flixel https://github.com/ThatDisabledKid/flixel
           haxelib run lime setup flixel
           haxelib run lime setup
           haxelib install flixel-tools
-          haxelib git flixel-ui https://github.com/BushsHaxs/flixel-ui-fix-for-hex
+          haxelib install flixel-ui
           haxelib install flixel-addons
           haxelib install tjson
           haxelib install hxjsonast

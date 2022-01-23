@@ -8,10 +8,8 @@ import flixel.util.FlxAxes;
 import flixel.FlxSprite;
 import lime.app.Application;
 import openfl.Lib;
-#if FEATURE_FILESYSTEM
 import sys.io.File;
 import sys.FileSystem;
-#end
 import flash.display.BitmapData;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.FlxCamera;

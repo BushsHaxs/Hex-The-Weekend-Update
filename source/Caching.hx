@@ -1,4 +1,3 @@
-#if FEATURE_FILESYSTEM
 package;
 
 import lime.app.Application;
@@ -11,10 +10,8 @@ import flixel.ui.FlxBar;
 import haxe.Exception;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-#if FEATURE_FILESYSTEM
 import sys.FileSystem;
 import sys.io.File;
-#end
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
@@ -88,7 +85,6 @@ class Caching extends MusicBeatState
 
 		FlxGraphic.defaultPersist = FlxG.save.data.cacheImages;
 
-		#if FEATURE_FILESYSTEM
 		if (FlxG.save.data.cacheImages)
 		{
 			Debug.logTrace("caching images...");
@@ -113,7 +109,6 @@ class Caching extends MusicBeatState
 
 		// TODO: Get the song list from OpenFlAssets.
 		music = Paths.listSongsToCache();
-		#end
 
 		toBeDone = Lambda.count(images) + Lambda.count(music);
 
@@ -127,7 +122,6 @@ class Caching extends MusicBeatState
 
 		trace('starting caching..');
 
-		#if FEATURE_MULTITHREADING
 		// update thread
 
 		sys.thread.Thread.create(() ->
@@ -149,7 +143,6 @@ class Caching extends MusicBeatState
 		{
 			cache();
 		});
-		#end
 
 		super.create();
 	}
@@ -163,7 +156,6 @@ class Caching extends MusicBeatState
 
 	function cache()
 	{
-		#if FEATURE_FILESYSTEM
 		trace("LOADING: " + toBeDone + " OBJECTS.");
 
 		for (i in images)
@@ -203,8 +195,7 @@ class Caching extends MusicBeatState
 		loaded = true;
 
 		trace(OpenFlAssets.cache.hasBitmapData('GF_assets'));
-		#end
+
 		FlxG.switchState(new TitleState());
 	}
 }
-#end

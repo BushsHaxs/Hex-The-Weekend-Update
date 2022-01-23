@@ -16,10 +16,8 @@ import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-#if FEATURE_FILESYSTEM
 import sys.FileSystem;
 import sys.io.File;
-#end
 
 class LoadReplayState extends MusicBeatState
 {
@@ -39,9 +37,7 @@ class LoadReplayState extends MusicBeatState
 	{
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.loadImage('menuDesat'));
 		// TODO: Refactor this to use OpenFlAssets.
-		#if FEATURE_FILESYSTEM
 		controlsStrings = sys.FileSystem.readDirectory(Sys.getCwd() + "/assets/replays/");
-		#end
 		trace(controlsStrings);
 
 		controlsStrings.sort(sortByDate);

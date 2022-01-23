@@ -115,9 +115,7 @@ class PauseSubState extends MusicBeatSubstate
 		perSongOffset.scrollFactor.set();
 		perSongOffset.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 
-		#if FEATURE_FILESYSTEM
 		add(perSongOffset);
-		#end
 
 		for (i in 0...menuItems.length)
 		{

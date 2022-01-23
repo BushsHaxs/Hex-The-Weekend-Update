@@ -3,10 +3,8 @@ package;
 import Song.SongMeta;
 import openfl.system.System;
 import lime.app.Application;
-#if FEATURE_FILESYSTEM
 import sys.io.File;
 import sys.FileSystem;
-#end
 import flixel.addons.ui.FlxUIButton;
 import flixel.addons.ui.StrNameLabel;
 import flixel.FlxCamera;
@@ -2912,7 +2910,6 @@ class ChartingState extends MusicBeatState
 	function updateHeads():Void
 	{
 		var mustHit = check_mustHitSection.checked;
-		#if FEATURE_FILESYSTEM
 		var head = (mustHit ? _song.player1 : _song.player2);
 		var i = sectionRenderes.members[curSection];
 
@@ -2950,10 +2947,8 @@ class ChartingState extends MusicBeatState
 			else
 				iconUpdate();
 		}
-		#else
 		leftIcon.animation.play(mustHit ? _song.player1 : _song.player2);
 		rightIcon.animation.play(mustHit ? _song.player2 : _song.player1);
-		#end
 	}
 
 	function updateNoteUI():Void

@@ -13,11 +13,9 @@ import openfl.media.Sound;
 #if FEATURE_STEPMANIA
 import smTools.SMFile;
 #end
-#if FEATURE_FILESYSTEM
 import sys.io.File;
 import Sys;
 import sys.FileSystem;
-#end
 import openfl.ui.KeyLocation;
 import openfl.events.Event;
 import haxe.EnumTools;

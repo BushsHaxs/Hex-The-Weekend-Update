@@ -5,10 +5,8 @@ import haxe.Exception;
 #if FEATURE_STEPMANIA
 import smTools.SMFile;
 #end
-#if FEATURE_FILESYSTEM
 import sys.FileSystem;
 import sys.io.File;
-#end
 import openfl.geom.Matrix;
 import openfl.display.BitmapData;
 import flixel.system.FlxSound;

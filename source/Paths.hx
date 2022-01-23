@@ -50,7 +50,6 @@ class Paths
 	{
 		var path = image(key, library);
 
-		#if FEATURE_FILESYSTEM
 		if (Caching.bitmapData != null)
 		{
 			if (Caching.bitmapData.exists(key))
@@ -59,7 +58,6 @@ class Paths
 				return Caching.bitmapData.get(key);
 			}
 		}
-		#end
 
 		if (OpenFlAssets.exists(path, IMAGE))
 		{

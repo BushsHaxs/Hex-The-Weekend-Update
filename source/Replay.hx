@@ -119,7 +119,6 @@ class Replay
 
 		var time = Date.now().getTime();
 
-		#if FEATURE_FILESYSTEM
 		File.saveContent("assets/replays/replay-" + PlayState.SONG.songId + "-time" + time + ".kadeReplay", data);
 
 		path = "replay-" + PlayState.SONG.songId + "-time" + time + ".kadeReplay"; // for score screen shit
@@ -127,12 +126,10 @@ class Replay
 		LoadFromJSON();
 
 		replay.ana = ana;
-		#end
 	}
 
 	public function LoadFromJSON()
 	{
-		#if FEATURE_FILESYSTEM
 		trace('loading ' + Sys.getCwd() + 'assets/replays/' + path + ' replay...');
 		try
 		{
@@ -143,6 +140,5 @@ class Replay
 		{
 			trace('failed!\n' + e.message);
 		}
-		#end
 	}
 }

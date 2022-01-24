@@ -10,7 +10,7 @@ import Discord.DiscordClient;
 #end
 import flixel.util.FlxColor;
 import openfl.Lib;
-import Conductor.BPMChangeEvent;
+import conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUIState;
 

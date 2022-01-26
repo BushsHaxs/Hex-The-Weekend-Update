@@ -80,6 +80,9 @@ import openfl.filters.ShaderFilter;
 import Discord.DiscordClient;
 #end
 
+var video:MP4Handler = new MP4Handler();
+
+video.playMP4(Paths.video('nameofyourvideohere'), new PlayState());
 using StringTools;
 
 class PlayState extends MusicBeatState

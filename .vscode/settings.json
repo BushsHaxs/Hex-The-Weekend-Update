@@ -44,20 +44,6 @@
       "target": "html5",
       "args": [
         "-release"
-       ]
-    },
-    {
-      "label": "Build macOS (Debug)",
-      "target": "macOS",
-      "args": [
-        "-debug"
-      ]
-    },
-    {
-      "label": "Build macOS (Release)",
-      "target": "macOS",
-      "args": [
-        "-release"
       ]
     }
   ]
